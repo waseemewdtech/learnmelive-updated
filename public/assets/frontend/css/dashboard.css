@@ -1,0 +1,72 @@
+.dashboard_id {
+    width: 10.25vw;
+    border-radius: 50px;
+}
+
+.smallCircleActive {
+    width: 21px;
+    height: 21px;
+    background-color: #3AC574;
+    border-radius: 50px;
+    position: absolute;
+    top: 56px;
+    right: 35%;
+}
+
+.side_navpills-1>li:hover {
+    background-color: #3AC574;
+    transition: 0.7s;
+    color: #ffffff;
+}
+
+.side_navpills-1>li {
+    border-radius: 4px;
+}
+
+.box_shadow1 {
+    /* box-shadow: 2px 2px 10px 4px #22222214; */
+    box-shadow: 1px 1px 23px 0px #22222221;
+}
+
+.tilteContainerDashboard {
+    border-bottom: 3px solid #3Ac574;
+}
+
+.p-100 {
+    padding-left: 100px;
+    padding-right: 100px;
+}
+
+.height {
+    border: 1px solid #9C9C9C;
+}
+
+.modal-header {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+}
+
+@media (min-width: 576px) {
+    .modal-dialog {
+        max-width: 1000px;
+        margin: 1.75rem auto;
+    }
+}
+
+.p-74 {
+    padding: 74px;
+}
+
+.modal-header .close {
+    padding: 0.5rem !important;
+    margin: -1rem -1rem -1rem auto;
+}
+
+@media screen and (max-width: 1220px) {
+    .p-100 {
+        padding-left: 15px !important;
+        padding-right: 15px !important;
+    }
+}

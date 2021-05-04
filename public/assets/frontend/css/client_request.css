@@ -1,0 +1,211 @@
+.bg_portfolioImg{
+  background-image:  url('../images/group282.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  height: 750px;
+  width: 100%;
+  border-radius: 8px;
+}
+/* .carousel-control-next {
+  right: -23px !important;
+}
+.carousel-control-next {
+  left: -23px !important;
+} */
+/* .carousel-control-next {
+  left: -23px !important;
+} */
+.carousel-indicators {
+  bottom: 57px !important;
+}
+.carousel-control-next-icon, .carousel-control-prev-icon {
+ 
+  height: 34px !important;
+}
+.carousel-control-next-icon {
+  background-image: url('../images/rightwhite.png') !important;
+}
+.carousel-control-prev-icon {
+  background-image: url('../images/leftwhite.png') !important;
+}
+.border-bottom{
+  border-bottom: 1px solid #FFFFFF;
+}
+.table_scroll{
+  height: 503px;
+  /* overflow: hidden; */
+  overflow-y: scroll;
+  background-color: #ffffff;
+}
+.tableFixHead thead th {
+  position: sticky;
+  top: -1px;
+  background: #ffffff;
+}
+.table-responsive::-webkit-scrollbar {
+  -webkit-appearance: none;
+}
+.h-44{
+  height: 44px;
+}
+
+.table-responsive::-webkit-scrollbar:vertical {
+  width: 8px;
+}
+
+.table-responsive::-webkit-scrollbar:horizontal {
+  height: 8px !important;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+  background-color: #3AC574;
+  border-radius: 10px;
+  border: 2px solid #ffffff;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+  border-radius: 10px;  
+  background-color: #ffffff; 
+}
+.table td, .table th {
+  text-align: center;
+  vertical-align: text-bottom ;
+
+}
+.bg_img_8{
+  background-image: linear-gradient(to bottom, rgb(0 0 0 / 20%), rgb(33 34 34 / 20%)), url('../images/download (1).png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  /* height: 99.71989860583017vh; */
+  height: 720px;
+  width: 100%;
+  border-radius: 10px;
+}
+.bg_imgcol-5{
+
+  background-image: linear-gradient(to bottom, rgb(0 0 0 / 20%), rgb(33 34 34 / 20%)), url('../images/1444665787925.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  /* height: 46.71989860583017vh; */
+  height: 340px;
+  width: 100%;
+  border-radius: 10px;
+}
+.bg_imgcol-5_two{
+  
+  background-image: linear-gradient(to bottom, rgb(0 0 0 / 20%), rgb(33 34 34 / 20%)), url('../images/571c8df6c7e5dedcda6a312d9cd2086b.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  /* height: 46.71989860583017vh; */
+  height: 340px;
+  width: 100%;
+  border-radius: 10px;
+  margin-top: 39px;
+}
+.h-6px{
+  height: 8px !important;
+}
+.w-261{
+  width: 261px;
+}
+.carousel-control-next {
+  right: -11px;
+}
+.carousel-control-prev {
+  left: -11px;
+}
+.card_boxShadow{
+  
+  box-shadow: rgb(0 0 0 / 22%) 1px 4px 12px;
+
+}
+.box-shadow-client{
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, -0.8), 0 12px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.cl-gray {
+  color: gray !important;
+}
+
+/* radio Color css */
+input[type='radio']:after {
+  width: 20px;
+  height: 20px;
+  border-radius: 15px;
+  top: -4px;
+  left: -1px;
+  position: relative;
+  background-color: #d1d3d1;
+  content: '';
+  display: inline-block;
+  visibility: visible;
+  border: 2px solid white;
+}
+
+input[type='radio']:checked:after {
+  width: 20px;
+  height: 20px;
+  border-radius: 15px;
+  top: -4px;
+  left: -1px;
+  position: relative;
+  background-color: #3AC574;
+  content: '';
+  display: inline-block;
+  visibility: visible;
+  border: 2px solid white;
+}
+/* radio Color css */
+/* Toggler btn */
+.dropdown-toggle-btn::after {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: .255em;
+  vertical-align: .255em;
+  content: "";
+  border-top: .3em solid;
+  border-right: .3em solid transparent;
+  border-bottom: 0;
+  border-left: .3em solid transparent;
+}
+.dropdown-menu{
+  z-index: 11111;
+}
+/* Toggler btn */
+
+@media screen and (max-width: 1650px){
+  .bg_img_8 {
+    height: 560px;
+  }
+  .bg_imgcol-5 {
+    height: 260px;
+  }
+  .bg_imgcol-5_two {
+    height: 260px;
+  }
+  .porfolio_images_title{
+    font-size: 1.7rem !important;
+  }
+  .porfolio_images_subtitle{
+    font-size: 1.5rem !important;
+  }
+  .comment_SectionName{
+    font-size: 22px !important;
+  
+}
+.comment_SectionDate{
+  font-size: 22px !important;
+  
+}
+.Comment{
+  font-size: 20px !important;
+}
+.comment_SectionLRD{
+  font-size: 18px !important;
+  
+}
+}

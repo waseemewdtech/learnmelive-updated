@@ -1,0 +1,81 @@
+.single-next {
+  right: -25px !important;
+}
+.singleprev {
+  left: -25px !important;
+}
+.carousel-2-prev{
+  left: -18px !important;
+
+}
+.carousel-2-next{
+  right: -18px !important;
+
+}
+.op-1{
+  opacity: 1 !important;
+}
+.pl-15{
+  padding-left: 15px;
+
+}
+.pr-15{
+  padding-right: 15px;
+
+}
+.bg-dark{
+  background-color: #2d2d2d !important;
+}
+.bg-F5F5F5{
+  background-color: #F5F5F5;
+}
+.card_circle {
+  width: 94px;
+  height: 94px;
+  border-radius: 50px;
+  position: absolute;
+  bottom: 80px;
+  right: 21px;
+}
+.borderRadius-50px{
+  border-radius: 50px !important;
+}
+.pl-pr-125{
+padding-left: 125px;
+padding-right: 125px;
+}
+.carousel-3-prev-bg {
+  background-image: url('../images/back.png') !important;
+  width: 28px !important;
+  height: 44px !important;
+}
+.carousel-3-next-bg {
+  background-image: url('../images/next.png') !important;
+  width: 28px !important;
+  height: 44px !important;
+}
+.carousel-3-prev {
+  left: -20px !important;
+}
+.carousel-3-next{
+  right: -20px !important;
+
+}
+
+.name_Sep{
+  position: absolute;
+  bottom: 106px;
+}
+.name_Sep_1{
+  position: absolute;
+  bottom: 148px;
+
+}
+.card-img-top {
+  width: 100%;
+  border-top-left-radius: calc(.25rem - 1px);
+  border-top-right-radius: calc(.25rem - 1px);
+  background: linear-gradient(rgba(64,64,64,1), rgb(0 0 0)) !important;
+  border-top-left-radius: 12px !important;
+  border-top-right-radius: 12px !important;
+}
