@@ -321,7 +321,7 @@
 @section('extra-script')
 
     <script>
-
+        
         @if(Auth::check())
             setInterval(function(){
                 @if(Auth::user()->user_type!='admin')

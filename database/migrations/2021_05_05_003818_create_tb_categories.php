@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateFailedJobsTable extends Migration
+class CreateTbCategories extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,12 @@ class CreateFailedJobsTable extends Migration
      */
     public function up()
     {
-        Schema::create('failed_jobs', function (Blueprint $table) {
+        Schema::create('tb_categories', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->text('connection');
-            $table->text('queue');
-            $table->longText('payload');
-            $table->longText('exception');
-            $table->timestamp('failed_at')->useCurrent();
+            $table->longText('title');
+            $table->tinyInteger('is_subcategory')->default(0);
+            $table->bigInteger('category_id')->default(-1);
+            $table->timestamp('date_created')->nullable();
         });
     }
 
@@ -30,6 +29,6 @@ class CreateFailedJobsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('failed_jobs');
+        Schema::dropIfExists('tb_categories');
     }
 }
