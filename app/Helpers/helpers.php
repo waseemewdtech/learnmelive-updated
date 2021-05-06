@@ -59,7 +59,7 @@
     {
         function categories()
         {
-            return Category::where('status','active')->get();
+            return Category::get();
         }
     }
     if(!function_exists('countries'))

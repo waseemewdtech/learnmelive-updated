@@ -52,6 +52,11 @@ class User extends Authenticatable
         return $this->hasOne(Specialist::class);
     }
 
+    public function serviceCategory()
+    {
+    	return $this->hasOne(ServiceCategory::class);
+    }
+
     public function admin()
     {
         return $this->hasOne(Admin::class);
@@ -82,5 +87,13 @@ class User extends Authenticatable
     public function disputeReciever(){
         return $this->hasOne(ClientSpecialistDispute::class,'reciever_id','id');
     }
-     
+
+    public function availableTime(){
+        return $this->hasOne(AvailableTime::class);
+    }
+    
+    public function portfolios()
+    {
+        return $this->hasMany(Portfolio::class);
+    }
 }

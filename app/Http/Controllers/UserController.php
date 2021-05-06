@@ -149,4 +149,15 @@ class UserController extends Controller
             return response()->json(['status'=>true]);
         }
     }
+
+    public function getSpecialistDetail($id){
+        $specialist = User::where('id',decrypt($id))->first();
+        return view('frontend.specialist_detail',compact('specialist'));
+    }
+
+    public function getPortfolio($id)
+    {
+        $portfolios = User::where('id', decrypt($id))->first()->portfolios;
+        return view('frontend.portfolio_display',compact('portfolios'));
+    }
 }

@@ -78,8 +78,8 @@ Route::group(['middleware'=>['auth']],function(){
     Route::post('/profile/change_avatar', 'ProfileController@update_avatar');
     Route::get('/change-password', 'ProfileController@password');
     Route::post('/password', 'ProfileController@update_password');
-    Route::get('specialist-detail/{id}', 'SpecialistController@getSpecialistDetail')->name('specialist_detail');
-    Route::get('specialist-portfolio/{id}', 'SpecialistController@getPortfolio')->name('specialist_portfolio');
+    Route::get('specialist-detail/{id}', 'UserController@getSpecialistDetail')->name('specialist_detail');
+    Route::get('specialist-portfolio/{id}', 'UserController@getPortfolio')->name('specialist_portfolio');
     Route::get('portfolio', function () {  return view('frontend.portfolio'); })->name('portfolio');
     Route::get('carousels', function () {  return view('frontend.carousels'); })->name('carousels');
     Route::get('getQueryServices','Specialist\ServiceController@getQueryServices')->name('getQueryServices');

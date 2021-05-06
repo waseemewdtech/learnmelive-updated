@@ -28,6 +28,7 @@ class CreateTbUser extends Migration
             $table->string('country');
             $table->string('remember_token')->nullable();
             $table->enum('profile_complete',[0,1])->default(0);
+            $table->string('address')->nullable();
             $table->longText('description')->nullable();
             $table->string('languages')->nullable();
             $table->longText('tools')->nullable();

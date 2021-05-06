@@ -12,14 +12,18 @@ class Category extends Model
     	return $this->hasMany(SubCategory::class);
     }
 
-
-    public function specialist()
+    public function user()
     {
-    	return $this->hasOne(Specialist::class);
+    	return $this->belongsTo(User::class);
     }
 
     public function servicerequest()
     {
     	return $this->hasOne(ServiceRequest::class);
+    }
+
+    public function serviceCategory()
+    {
+    	return $this->hasOne(Category::class);
     }
 }
