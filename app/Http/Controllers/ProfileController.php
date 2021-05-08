@@ -15,6 +15,7 @@ use App\SubCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class ProfileController extends Controller
 {
@@ -38,9 +39,17 @@ class ProfileController extends Controller
         //     $appointments = Appointment::where('user_id', Auth::user()->id)->get();
         //     return view('profile', compact('profile', 'subcategories', 'categories','appointments', 'bids'));
         // }
-        $subcategories = SubCategory::all();
+        $categories = Category::all();
         $profile = Auth::user();
-        return view('frontend.settings.profile', compact('profile', 'subcategories'));
+        $category = Category::where('title',Auth::user()->serviceCategory->name)->first();
+        if($category->category_id !=-1)
+        {
+            $subCategories =  Category::where('id',$category->category_id)->orWhere('category_id',$category->category_id)->get();
+        }else{
+            $subCategories = Category::where('title',Auth::user()->serviceCategory->name)->first();
+        }
+        
+        return view('frontend.settings.profile', compact('profile', 'subCategories'));
     }
 
     /**
@@ -51,7 +60,7 @@ class ProfileController extends Controller
     public function update_avatar(Request $request)
     {
         $profile = User::find(Auth::id());
-        $old_avatar = $profile->avatar;
+        $old_avatar = $profile->picture;
 
         $this->validate($request, [
             'avatar' => 'required|image|mimes:jpeg,jpg,png|max:2048',
@@ -62,18 +71,21 @@ class ProfileController extends Controller
 
             $profileImage = $request->file('avatar');
             $profile_image_original_name = $profileImage->getClientOriginalName();
-            $image_changed_name = time() . '_' . str_replace('', '-', '');
+            $image_changed_name = time() . '.'.$profileImage->extension();
 
             $profileImage->move('public/uploads/user/', $image_changed_name);
-            $avatar_url = 'public/uploads/user/' . $image_changed_name;
+            $avatar_url = url('/uploads/user') .'/'. $image_changed_name;
         }
 
-        $profile->avatar = $avatar_url;
+        $profile->picture = $avatar_url;
         $profile->save();
 
-        if (!empty($old_avatar)) {
-            unlink($old_avatar);
+        if (!empty($old_avatar)){
+            if(file_exists($old_avatar)){
+                unlink($old_avatar);
+            }
         }
+
         return back()->with('success', 'Profile image updated successfully!');
     }
 
@@ -167,23 +179,29 @@ class ProfileController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request)
+    public function update(Request $request,$id)
     {
-        
-        $profile = User::find(Auth::id());
-        $this->validate($request, [
-            'name' => ['required', 'string', 'max:255'],
-            'username' => ['nullable', 'string', 'max:255', 'unique:users,username,' . $profile->id],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $profile->id],
+        $profile = User::find($id);
+        $validations = Validator::make($request->all(), [
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
+            'phone' => ['required', 'string', 'max:255'],
+            'username' => ['required', 'string', 'max:255', 'unique:tb_user,username,' . $profile->id],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:tb_user,email,' . $profile->id],
         ]);
 
+        if($validations->fails())
+        {
+            return back()->inputErrors($validations);
+        }
 
         $profile->username = $request->username;
-        $profile->name = $request->name;
+        $profile->first_name = $request->first_name;
+        $profile->last_name = $request->last_name;
         $profile->email = $request->email;
         $profile->country = $request->country;
-        $profile->time_zone = $request->timezone;
-        $profile->status = 'active';
+        $profile->phone = $request->phone;
+        $profile->timezone = $request->timezone;
         $profile->save();
 
         if(Auth::user()->user_type != 'admin'){

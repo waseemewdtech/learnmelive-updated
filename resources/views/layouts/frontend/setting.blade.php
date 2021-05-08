@@ -14,7 +14,7 @@
             <div class="d-flex align-items-center flex-column">
                 <div class="dashboard_id text-center">
                     <img id="blah" class="rounded-circle blah"
-                        src="{{(Auth::user()->avatar != null)? asset(Auth::user()->avatar): asset('assets/frontend/images/GettyImages-1136599956-hair-stylist-1200x630-min.png') }}"
+                        src="{{(Auth::user()->picture != null)? asset(Auth::user()->picture): asset('uploads/user/default.jpg') }}"
                         alt="" style="height: 118px; width: 118px;" />
                     <form action="{{ url('/profile/change_avatar') }}" method="post" enctype="multipart/form-data"
                         id="avatar_form">
@@ -31,16 +31,16 @@
                     </form>
                 </div>
                 <p class="m-0 f-27 robotoMedium cl-5757575 pt-3">{{ ucwords(Auth::user()->username) }}</p>
-                @if (Auth::user()->user_type == 'specialist')
-                    <p class="f-18 cl-a8a8a8a robotoMedium m-0 pt-1">{{ ucwords(Auth::user()->specialist->category->name) }}
+                @if (Auth::user()->type == 'seller')
+                    <p class="f-18 cl-a8a8a8a robotoMedium m-0 pt-1">{{ ucwords(Auth::user()->serviceCategory->name) }}
                     </p>
                 @endif
             </div>
 
             <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                @if(Auth::user()->user_type!='admin')
+                @if(Auth::user()->type!='admin')
                     <a class="nav-link {{ Request::is('profile') ? 'active' : ''  }} cl-000000"  href="{{ url('/profile') }}" >Profile</a>
-                    @if (Auth::user()->user_type == 'specialist')
+                    @if (Auth::user()->type == 'seller')
                         <a class="nav-link {{ Request::is('portfolio_setting') ? 'active' : ''  }} cl-000000"  href="{{ url('/portfolio_setting') }}" >Portfolio</a>
                         <a class="nav-link cl-000000 {{ Request::is('services') ? 'active' : ''  }}"  href="{{ url('/services') }}" >Services</a>
                     @endif
