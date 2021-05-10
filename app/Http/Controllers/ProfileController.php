@@ -12,6 +12,9 @@ use App\Models\Specialists\Service;
 use App\Specialist;
 use App\User;
 use App\SubCategory;
+use App\PaymentInfo;
+use App\AvailableTime;
+use App\ServiceCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -41,12 +44,18 @@ class ProfileController extends Controller
         // }
         $categories = Category::all();
         $profile = Auth::user();
-        $category = Category::where('title',Auth::user()->serviceCategory->name)->first();
-        if($category->category_id !=-1)
+        if($profile->type=='seller')
         {
-            $subCategories =  Category::where('id',$category->category_id)->orWhere('category_id',$category->category_id)->get();
+            $category = Category::where('title',$profile->serviceCategory->name)->first();
+            if($category->category_id !=-1)
+            {
+                $parentCategory =  Category::where('id',$category->category_id)->first();
+                $subCategories =  Category::where('id',$parentCategory->id)->orWhere('category_id',$parentCategory->id)->get();
+            }else{
+                $subCategories = Category::where('title',Auth::user()->serviceCategory->name)->get();
+            }    
         }else{
-            $subCategories = Category::where('title',Auth::user()->serviceCategory->name)->first();
+            $subCategories = [];
         }
         
         return view('frontend.settings.profile', compact('profile', 'subCategories'));
@@ -192,7 +201,7 @@ class ProfileController extends Controller
 
         if($validations->fails())
         {
-            return back()->inputErrors($validations);
+            return back()->withErrors($validations);
         }
 
         $profile->username = $request->username;
@@ -204,48 +213,71 @@ class ProfileController extends Controller
         $profile->timezone = $request->timezone;
         $profile->save();
 
-        if(Auth::user()->user_type != 'admin'){
+        if(Auth::user()->type != 'admin'){
 
-            if ($profile->user_type == 'specialist') {
-                if (count($request->days) > 0) {
-                    foreach ($request->days as $key => $value) {
-                        $from = $value . '_from';
-                        $to = $value . '_to';
-                        $hours_arr[$value] = [$request->$from, $request->$to];
-                        // if($value =="saturday" || $value=='sunday')
-                        // {
-                        //     $hours_arr[$value] = ['closed'];
-                        // }
-                        // else
-                        // {
-                        //     $hours_arr[$value] = [$data[$value.'_from'],$data[$value.'_to']];
-                        // }
-            
+            if ($profile->type == 'seller') {
+                if(count($request->days) >0)
+                {
+                    date_default_timezone_set(config('app.timezone'));
+                    foreach(['mon','tue','wed','thr','fri','sat','sun'] as  $key => $value){
+                        if(in_array($value,$request->days)){
+                            $f = $value.'_from';
+                            $t = $value.'_to';
+                            $hours_arr[$value] = (strtotime($request->$f)*1000).'~'.(intval(strtotime($request->$t)*1000));
+                        }else{
+                            $hours_arr[$value] = 'Closed';
+                        }
                     }
+                    $hours_arr['user_id'] = $profile->id;
+                    AvailableTime::where('user_id',$profile->id)->update($hours_arr);
                 }
+                $category = Category::find($request->sub_category_id);
+                $serviceCategoryFirst= ServiceCategory::where('user_id',$profile->id)->first();
+                $serviceCategory= ServiceCategory::find($serviceCategoryFirst->id);
+                $serviceCategory->user_id = $profile->id;
+                $serviceCategory->category_id = $category->id;
+                $serviceCategory->name = $category->title;
+                $serviceCategory->save();
+
+                // if (count($request->days) > 0) {
+                //     foreach ($request->days as $key => $value) {
+                //         $from = $value . '_from';
+                //         $to = $value . '_to';
+                //         $hours_arr[$value] = [$request->$from, $request->$to];
+                //         // if($value =="saturday" || $value=='sunday')
+                //         // {
+                //         //     $hours_arr[$value] = ['closed'];
+                //         // }
+                //         // else
+                //         // {
+                //         //     $hours_arr[$value] = [$data[$value.'_from'],$data[$value.'_to']];
+                //         // }
             
-                $specialist = Specialist::findOrFail(Auth::user()->specialist->id);
-                $specialist->user_id = $profile->id;
-                $specialist->category_id = $request->category_id;
-                $specialist->sub_category_id = json_encode($request->sub_category_id);
-                $specialist->business_phone = $request->business_phone;
-                $specialist->public_profile = $request->public_profile;
-                $specialist->payment_method = $request->payment_method;
-                if ($request->payment_method == 'stripe' && $request->user_type != 'client') {
-                    $specialist->payment_first_name = $request->payment_first_name;
-                    $specialist->payment_last_name = $request->payment_last_name;
-                    $specialist->payment_birth_date = $request->payment_birth_date;
-                    $specialist->payment_ssn = $request->payment_ssn;
-                    $specialist->account_number = $request->account_number;
-                    $specialist->routing_number = $request->routing_number;
-                    $specialist->stripe_public_key = $request->stripe_public_key;
-                    $specialist->stripe_secrete_key = $request->stripe_secrete_key;
-                } else if ($request->payment_method != 'stripe' && $request->user_type != 'client') {
-                    $specialist->payment_email = $request->payment_email;
-                }
-                $specialist->opening_hours = json_encode($hours_arr);
+                //     }
+                // }
             
-                $specialist->save();
+                // $specialist = Specialist::findOrFail(Auth::user()->specialist->id);
+                // $specialist->user_id = $profile->id;
+                // $specialist->category_id = $request->category_id;
+                // $specialist->sub_category_id = json_encode($request->sub_category_id);
+                // $specialist->business_phone = $request->business_phone;
+                // $specialist->public_profile = $request->public_profile;
+                // $specialist->payment_method = $request->payment_method;
+                // if ($request->payment_method == 'stripe' && $request->user_type != 'client') {
+                //     $specialist->payment_first_name = $request->payment_first_name;
+                //     $specialist->payment_last_name = $request->payment_last_name;
+                //     $specialist->payment_birth_date = $request->payment_birth_date;
+                //     $specialist->payment_ssn = $request->payment_ssn;
+                //     $specialist->account_number = $request->account_number;
+                //     $specialist->routing_number = $request->routing_number;
+                //     $specialist->stripe_public_key = $request->stripe_public_key;
+                //     $specialist->stripe_secrete_key = $request->stripe_secrete_key;
+                // } else if ($request->payment_method != 'stripe' && $request->user_type != 'client') {
+                //     $specialist->payment_email = $request->payment_email;
+                // }
+                // $specialist->opening_hours = json_encode($hours_arr);
+            
+                // $specialist->save();
             } else if ($profile->user_type == 'client') {
                 $client = Client::findOrFail(Auth::user()->client->id);
                 $client->user_id = $profile->id;

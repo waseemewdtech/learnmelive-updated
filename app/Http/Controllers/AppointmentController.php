@@ -7,9 +7,11 @@ use App\Models\Appointment;
 use App\Models\Specialists\Service;
 use Carbon\Carbon;
 use Validator;
+use App\ServiceCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Rating;
+use App\User;
 class AppointmentController extends Controller
 {
     /**
@@ -34,16 +36,16 @@ class AppointmentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create($id)
+    public function create(Request $request,$id)
     {
         $id =  decrypt($id);
-        $service = Service::findOrFail($id);
-        $services = Service::where('specialist_id',$service->specialist_id)->where('id',
-        '!=',$id)->get();
+        $time = $request->time;
+        $service = ServiceCategory::findOrFail($id);
+        $specialist = User::where('id',$service->user_id)->first();
         $today = Carbon::today();
         $tomorrow = Carbon::tomorrow();
         $appointments = Appointment::where('service_id',$id)->where('status','1')->whereBetween('created_at', [$today, $tomorrow])->get()->pluck('time')->toArray();
-        return view('frontend.appointments',compact('service', 'appointments', 'services'));
+        return view('frontend.appointments',compact('service','specialist','appointments','time'));
     }
 
     /**
@@ -193,8 +195,31 @@ class AppointmentController extends Controller
                 //         $avatar=url('/public/uploads/user/default.jpg');
                 //     }
                 // }
-                ($user->user_type=='client')? ($appointment->specialist->user->avatar!='') ? $avatar=url('/').'/'.$appointment->specialist->user->avatar: $pro=url('/public/uploads/user/default.jpg') : ($appointment->user->avatar!='') ? $avatar=url('/').'/'.$appointment->user->avatar : $avatar=url('/public/uploads/user/default.jpg');
-                ($user->user_type=='client')?$username=$appointment->specialist->user->username :$username=$appointment->user->username;
+                if($user->type=='buyer')
+                {
+                    if($appointment->specialist->user->avatar!='')
+                    {
+                        $avatar=url('/').'/'.$appointment->specialist->user->avatar;
+                    }
+                    else
+                    {
+                        $pro=url('/public/uploads/user/default.jpg');
+                    }
+                }elseif($user->type=='seller'){
+                    if($appointment->user->avatar!=''){
+                        $avatar=url('/').'/'.$appointment->user->avatar;
+                    }else{
+                        $avatar=url('/public/uploads/user/default.jpg');   
+                    }
+                }
+                // ($user->user_type=='client')? ($appointment->specialist->user->avatar!='') ? $avatar=url('/').'/'.$appointment->specialist->user->avatar: $pro=url('/public/uploads/user/default.jpg') : ($appointment->user->avatar!='') ? $avatar=url('/').'/'.$appointment->user->avatar : $avatar=url('/public/uploads/user/default.jpg');
+                if($user->type=='buyer'){
+                    $username=$appointment->specialist->user->username;
+                }
+                elseif($user->type=='seller'){
+                    $username=$appointment->user->username;
+                }
+
                 $a = [];
                 $a['id']=$appointment->id;
                 $a['url'] = url('/appointments').'/'.$appointment->id;

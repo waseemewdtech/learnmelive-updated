@@ -161,7 +161,7 @@ class RegisterController extends Controller
                 date_default_timezone_set(config('app.timezone'));
                 foreach(['mon','tue','wed','thr','fri','sat','sun'] as  $key => $value){
                     if(in_array($value,explode(',',$data['days']))){
-                        $hours_arr[$value] = strtotime($data[$value.'_from']).'~'.strtotime($data[$value.'_to']);
+                        $hours_arr[$value] = strtotime($data[$value.'_from'])*1000.'~'.strtotime($data[$value.'_to']*1000);
                     }else{
                         $hours_arr[$value] = 'Closed';
                     }

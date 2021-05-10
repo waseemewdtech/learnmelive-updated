@@ -68,7 +68,7 @@
                                 </div>
                                 <div class="w-100">
                                     <input type="text" class="w-100 form-control border-0" placeholder="Enter name"
-                                        name="first_name" id="name" aria-label="" aria-describedby="basic-addon1"
+                                        name="name" id="name" aria-label="" aria-describedby="basic-addon1"
                                         value="{{ Auth::user()->first_name }}" />
                                 </div>
                             </div>
@@ -84,7 +84,7 @@
                                 </div>
                                 <div class="w-100">
                                     <input type="text" class="w-100 form-control border-0" placeholder="Enter name"
-                                        name="last_name" id="name" aria-label="" aria-describedby="basic-addon1"
+                                        name="name" id="name" aria-label="" aria-describedby="basic-addon1"
                                         value="{{ Auth::user()->last_name }}" />
                                 </div>
                             </div>
@@ -513,140 +513,81 @@
                                                 check the respective day</p>
                                         </div>
                                     </div>
-                                    @php  $week_days =
-                                    array('mon','tue','wed','thr','fri','sat','sun' );
+                                    @php $days = json_decode(Auth::user()->specialist->opening_hours); $week_days =
+                                    array('monday','tuesday','wednesday','thursday','friday','saturday','sunday' );
                                     @endphp
                                     <div class="pl-4 mt-2">
                                         @foreach ($week_days as $week_day)
-                                            @if(Auth::user()->availableTime->$week_day!='Closed')
-                                                @php 
-                                                    $t = explode('~',Auth::user()->availableTime->$week_day);
-                                                 $from = date('g:i A',intval($t[0])/1000);
-                                                     $to = date('g:i A',intval($t[1])/1000);
-                                                @endphp
+                                            <div
+                                                class="border-bottom custom-control custom-checkbox d-flex justify-content-between align-items-center">
+                                                <input type="checkbox" class="custom-control-input checkbxCheck days "
+                                                    {{ ( array_key_exists($week_day,$days)) ?'checked':'' }}
+                                                    onchange="dayOpened(this);" id="customCheck{{ $week_day }}"
+                                                    name="days[]" value="{{ $week_day }}">
+                                                <label class="custom-control-label mr-2" for="customCheck{{ $week_day }}"
+                                                    style="width: 100px;">{{ ucfirst($week_day) }}</label>
+                                                <!-- Time select code -->
 
-                                                <div
-                                                    class="border-bottom custom-control custom-checkbox d-flex justify-content-between align-items-center">
-                                                    <input type="checkbox" class="custom-control-input checkbxCheck days "checked
-                                                        onchange="dayOpened(this);" id="customCheck{{ $week_day }}"
-                                                        name="days[]" value="{{ $week_day }}">
-                                                    <label class="custom-control-label mr-2" for="customCheck{{ $week_day }}"
-                                                        style="width: 100px;">{{ ucfirst($week_day) }}</label>
-                                                    <!-- Time select code -->
+                                                <select
+                                                    class="custom-select-reg {{ ( array_key_exists($week_day,$days))?'':'d-none' }} ml-5 mr-2"
+                                                    name="{{ $week_day }}_from">
+                                                    @for ($j = 1; $j <=2; $j++) @if ($j==1) {{ $interval = "AM" }} @else
+                                                        {{ $interval = "PM" }} @endif @for($i=1;$i<=12;$i++) <option
+                                                        value="{{ $i.':'.'00 '.$interval }}" {{ ( array_key_exists($week_day,$days)) ? (($days->
+                                                        $week_day[0] == $i.':'.'00 '.$interval) ? "selected":'' ):''}}>
+                                                        {{ $i.':'.'00 '.$interval }}
+                                                        </option>
+                                                        <option value="{{ $i.':'.'15 '.$interval }}" {{ ( array_key_exists($week_day,$days)) ? (($days->
+                                                        $week_day[0] == $i.':'.'15 '.$interval) ? "selected":''):'' }}>
+                                                            {{ $i.':'.'15 '.$interval }}
+                                                        </option>
+                                                        <option value="{{ $i.':'.'30 '.$interval }}" {{ ( array_key_exists($week_day,$days)) ? (($days->
+                                                        $week_day[0] == $i.':'.'30 '.$interval) ? "selected":''):'' }}>
+                                                            {{ $i.':'.'30 '.$interval }}
+                                                        </option>
+                                                        <option value="{{ $i.':'.'45 '.$interval }}" {{ ( array_key_exists($week_day,$days)) ? (($days->
+                                                        $week_day[0] == $i.':'.'45 '.$interval) ? "selected":''):'' }}>
+                                                            {{ $i.':'.'45 '.$interval }}
+                                                        </option>
+                                                        @endfor @endfor
+                                                </select>
+                                                -
+                                                <select
+                                                    class="custom-select-reg {{ ( array_key_exists($week_day,$days))?'':'d-none' }} ml-2"
+                                                    name="{{ $week_day }}_to">
+                                                    @for ($j = 1; $j <=2; $j++) @if ($j==1) {{ $interval = "AM" }} @else
+                                                        {{ $interval = "PM" }} @endif @for($i=1;$i<=12;$i++) <option
+                                                        value="{{ $i.':'.'00 '.$interval }}" {{ ( array_key_exists($week_day,$days)) ? (($days->
+                                                        $week_day[1] == $i.':'.'00 '.$interval) ? "selected":'' ):''}}>
+                                                        {{ $i.':'.'00 '.$interval }}
+                                                        </option>
+                                                        <option value="{{ $i.':'.'15 '.$interval }}" {{ ( array_key_exists($week_day,$days)) ? (($days->
+                                                        $week_day[1] == $i.':'.'15 '.$interval) ? "selected":''):'' }}>
+                                                            {{ $i.':'.'15 '.$interval }}
+                                                        </option>
+                                                        <option value="{{ $i.':'.'30 '.$interval }}" {{ ( array_key_exists($week_day,$days)) ? (($days->
+                                                        $week_day[1] == $i.':'.'30 '.$interval) ? "selected":''):'' }}>
+                                                            {{ $i.':'.'30 '.$interval }}
+                                                        </option>
+                                                        <option value="{{ $i.':'.'45 '.$interval }}" {{ ( array_key_exists($week_day,$days)) ? (($days->
+                                                        $week_day[1] == $i.':'.'45 '.$interval) ? "selected":''):'' }}>
+                                                            {{ $i.':'.'45 '.$interval }}
+                                                        </option>
+                                                        @endfor @endfor
+                                                </select>
+                                                <!-- Time select code -->
+                                                @if (!( array_key_exists($week_day,$days)))
 
-                                                    <select
-                                                        class="custom-select-reg ml-5 mr-2"
-                                                        name="{{ $week_day }}_from">
-                                                        @for ($j = 1; $j <=2; $j++) @if ($j==1) {{ $interval = "AM" }} @else
-                                                            {{ $interval = "PM" }} @endif @for($i=1;$i<=12;$i++) <option
-                                                            value="{{ $i.':'.'00 '.$interval }}" {{ $from== $i.':'.'00 '.$interval ? "selected":''}}>
-                                                            {{ $i.':'.'00 '.$interval }}
-                                                            </option>
-                                                            <option value="{{ $i.':'.'15 '.$interval }}" {{ $from== $i.':'.'15 '.$interval ? "selected":''}}>
-                                                                {{ $i.':'.'15 '.$interval }}
-                                                            </option>
-                                                            <option value="{{ $i.':'.'30 '.$interval }}" {{ $from == $i.':'.'30 '.$interval ? "selected":'' }}>
-                                                                {{ $i.':'.'30 '.$interval }}
-                                                            </option>
-                                                            <option value="{{ $i.':'.'45 '.$interval }}" {{ $from == $i.':'.'45 '.$interval ? "selected":'' }}>
-                                                                {{ $i.':'.'45 '.$interval }}
-                                                            </option>
-                                                            @endfor @endfor
-                                                    </select>
-                                                    -
-                                                    <select
-                                                        class="custom-select-reg ml-2"
-                                                        name="{{ $week_day }}_to">
-                                                        @for ($j = 1; $j <=2; $j++) @if ($j==1) {{ $interval = "AM" }} @else
-                                                            {{ $interval = "PM" }} @endif @for($i=1;$i<=12;$i++) <option
-                                                            value="{{ $i.':'.'00 '.$interval }}" {{ ($to == $i.':'.'00 '.$interval) ? "selected":'' }}>
-                                                            {{ $i.':'.'00 '.$interval }}
-                                                            </option>
-                                                            <option value="{{ $i.':'.'15 '.$interval }}" {{ ($to == $i.':'.'15 '.$interval) ? "selected":'' }}>
-                                                                {{ $i.':'.'15 '.$interval }}
-                                                            </option>
-                                                            <option value="{{ $i.':'.'30 '.$interval }}" {{ ($to == $i.':'.'30 '.$interval) ? "selected":'' }}>
-                                                                {{ $i.':'.'30 '.$interval }}
-                                                            </option>
-                                                            <option value="{{ $i.':'.'45 '.$interval }}" {{ ($to == $i.':'.'45 '.$interval) ? "selected":'' }}>
-                                                                {{ $i.':'.'45 '.$interval }}
-                                                            </option>
-                                                            @endfor @endfor
-                                                    </select>
-                                                    <!-- Time select code -->
-                                                    
-                                                    <span class="ml-5 pr-4 cl-gray d-none">Closed</span>
-                                                    
-                                                    {{-- <span class="ml-5 pr-4 d-none cl-gray">Closed</span> --}}
+                                                <span class="ml-5 pr-4 cl-gray">Closed</span>
+                                                @else
+                                                <span class="ml-5 pr-4 d-none cl-gray">Closed</span>
+                                                @endif
 
-                                                    <button type="button"
-                                                        class="close close-reg "
-                                                        aria-label="Close" onclick="dayClosed(this);"><span
-                                                            aria-hidden="true">&times;</span></button>
-                                                </div>
-                                            @else
-                                                <div
-                                                    class="border-bottom custom-control custom-checkbox d-flex justify-content-between align-items-center">
-                                                    <input type="checkbox" class="custom-control-input checkbxCheck days "
-                                                        onchange="dayOpened(this);" id="customCheck{{ $week_day }}"
-                                                        name="days[]" value="{{ $week_day }}">
-                                                    <label class="custom-control-label mr-2" for="customCheck{{ $week_day }}"
-                                                        style="width: 100px;">{{ ucfirst($week_day) }}</label>
-                                                    <!-- Time select code -->
-
-                                                    <select
-                                                        class="custom-select-reg ml-5 mr-2 d-none"
-                                                        name="{{ $week_day }}_from">
-                                                        @for ($j = 1; $j <=2; $j++) @if ($j==1) {{ $interval = "AM" }} @else
-                                                            {{ $interval = "PM" }} @endif @for($i=1;$i<=12;$i++) <option
-                                                            value="{{ $i.':'.'00 '.$interval }}">
-                                                            {{ $i.':'.'00 '.$interval }}
-                                                            </option>
-                                                            <option value="{{ $i.':'.'15 '.$interval }}">
-                                                                {{ $i.':'.'15 '.$interval }}
-                                                            </option>
-                                                            <option value="{{ $i.':'.'30 '.$interval }}">
-                                                                {{ $i.':'.'30 '.$interval }}
-                                                            </option>
-                                                            <option value="{{ $i.':'.'45 '.$interval }}">
-                                                                {{ $i.':'.'45 '.$interval }}
-                                                            </option>
-                                                            @endfor @endfor
-                                                    </select>
-                                                    -
-                                                    <select
-                                                        class="custom-select-reg ml-2 d-none"
-                                                        name="{{ $week_day }}_to">
-                                                        @for ($j = 1; $j <=2; $j++) @if ($j==1) {{ $interval = "AM" }} @else
-                                                            {{ $interval = "PM" }} @endif @for($i=1;$i<=12;$i++) <option
-                                                            value="{{ $i.':'.'00 '.$interval }}">
-                                                            {{ $i.':'.'00 '.$interval }}
-                                                            </option>
-                                                            <option value="{{ $i.':'.'15 '.$interval }}">
-                                                                {{ $i.':'.'15 '.$interval }}
-                                                            </option>
-                                                            <option value="{{ $i.':'.'30 '.$interval }}">
-                                                                {{ $i.':'.'30 '.$interval }}
-                                                            </option>
-                                                            <option value="{{ $i.':'.'45 '.$interval }}">
-                                                                {{ $i.':'.'45 '.$interval }}
-                                                            </option>
-                                                            @endfor @endfor
-                                                    </select>
-                                                    <!-- Time select code -->
-                                                    
-                                                    <span class="ml-5 pr-4 cl-gray">Closed</span>
-                                                    
-                                                    {{-- <span class="ml-5 pr-4 d-none cl-gray">Closed</span> --}}
-
-                                                    <button type="button"
-                                                        class="close close-reg d-none"
-                                                        aria-label="Close" onclick="dayClosed(this);"><span
-                                                            aria-hidden="true">&times;</span></button>
-                                                </div>
-                                            @endif
-                                            
-                                            {{$t[0]}}
+                                                <button type="button"
+                                                    class="close close-reg {{ ( array_key_exists($week_day,$days))?'':'d-none' }} "
+                                                    aria-label="Close" onclick="dayClosed(this);"><span
+                                                        aria-hidden="true">&times;</span></button>
+                                            </div>
                                         @endforeach
                                     </div>
                                     <div class="modal-footer m-auto border-0">
@@ -658,9 +599,6 @@
                         </div>
 
                     <!-- Modal 2nd code end-->
-                        <div class="row justify-content-end">
-                            <button type="submit" class="btn btn-sm bg-3AC574 text-white">Save Changes</button>
-                        </div>
                 </form>
 
                 {{-- <div id="paypal-html" style="display: none;">

@@ -152,9 +152,9 @@
                 </div>
             </li>
             <li class="nav-item  robotoRegular pl-4 cl-ffffff">
-                @if (Auth::user()->type == 'specialist')
+                @if (Auth::user()->type == 'seller')
                     <a class="nav-link cl-ffffff" href="{{  url('services')}}?add_new">Add Service</a>
-                @elseif(Auth::user()->type == 'client')
+                @elseif(Auth::user()->type == 'buyer')
                     <a class="nav-link cl-ffffff" href="{{ route('client.index')}}#post_job">Post Request</a>
                 @endif
             </li>
@@ -170,11 +170,11 @@
                     @endif
                 </a>
                 <div class="dropdown-menu dropdown-menu-right">
-                    @if (Auth::user()->type == 'client')
+                    @if (Auth::user()->type == 'buyer')
                     <a href="{{ route('client.index') }}" class="dropdown-item">Dashboard</a>
 
                     @endif
-                    @if (Auth::user()->type == 'specialist')
+                    @if (Auth::user()->type == 'seller')
                     <a href="{{ route('specialist.index') }}" class="dropdown-item">Dashboard</a>
 
                     @endif

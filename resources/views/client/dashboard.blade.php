@@ -438,7 +438,7 @@ span.prefix{
             
             <div class="carousel-inner h-413">
 
-                @foreach(App\Specialist::all()->chunk(4) as $specialistsCollections)
+                @foreach(App\User::where('type','seller')->where('approve','1')->get()->chunk(4) as $specialistsCollections)
 
                     <div class="carousel-item {{ $loop->first ? 'active' : '' }}">
                         <section class="d-block w-100">
@@ -450,11 +450,11 @@ span.prefix{
                                                 <img src="{{ asset('assets/frontend/images/86d75f5ebf6abc13a630dda33b292727.png') }}"
                                                     class="card-img-top" alt="...">
                                                 <div class="card-body p-0 m-0 bg-transparent circle card_circle ">
-                                                    <img src="{{ ($specialist->user->avatar != null) ? asset($specialist->user->avatar) : asset('uploads/user/default.jpg') }}"  class="img-fluid rounded-circle h-60 w-60 profile-shadow"  alt="profile"  >
+                                                    <img src="{{ ($specialist->picture != null) ? asset($specialist->picture) : asset('uploads/user/default.jpg') }}"  class="img-fluid rounded-circle h-60 w-60 profile-shadow"  alt="profile"  >
                                                 </div>
                                                 <div class="card-footer  bg-ffffff pt-4 pb-4">
-                                                    <h5 class="card-title m-0 RobotoMedium f-21 cl-000000">{{ ucwords($specialist->category->name) }}</h5>
-                                                    <p class="card-text m-0 robotoRegular cl-6 cl-6b6b6b f-21 pt-1">{{ $specialist->user->username }}
+                                                    <h5 class="card-title m-0 RobotoMedium f-21 cl-000000">{{ ucwords($specialist->serviceCategory->name) }}</h5>
+                                                    <p class="card-text m-0 robotoRegular cl-6 cl-6b6b6b f-21 pt-1">{{ $specialist->username }}
                                                     </p>
                                                 </div>
 
@@ -481,7 +481,7 @@ span.prefix{
         </div>
     </section>
 
-    @if(Auth::user()->status=='active')
+    @if(Auth::user()->approve=='1')
 
         <section class=" pl-3 pt-70" id="post_job">
             @include('common.messages')

@@ -17,7 +17,7 @@ class CheckUserStatus
     {
         if(Auth::check())
         {
-            if(Auth::user()->status=='active')
+            if(Auth::user()->approve=='1')
             {
                 return $next($request);
             }

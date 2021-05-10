@@ -7,6 +7,7 @@ use Validator;
 use Hash;
 use App\User;
 use App\Role;
+use App\Category;
 use Yajra\DataTables\DataTables;
 use Auth;
 
@@ -152,7 +153,8 @@ class UserController extends Controller
 
     public function getSpecialistDetail($id){
         $specialist = User::where('id',decrypt($id))->first();
-        return view('frontend.specialist_detail',compact('specialist'));
+        $category = Category::where('title',$specialist->serviceCategory->name)->first();
+        return view('frontend.specialist_detail',compact('specialist','category'));
     }
 
     public function getPortfolio($id)

@@ -327,49 +327,21 @@
         <div class="row m-0 pl-0 pr-0 pt-4 pb-4">
             <div class="col-md-6 col-lg-6">
                 <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
-                    {{-- <ol class="carousel-indicators">
-                <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-                <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-                <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
-              </ol> --}}
                     <div class="carousel-inner">
                         <div class="carousel-item active h-513">
                             <img src="{{ ($specialist->picture != null) ? asset($specialist->picture) : asset('assets/frontend/images/avatar-large.png')  }}"
                                 class="d-block w-100 img-fluid h-100" alt="...">
                         </div>
-                        {{-- <div class="carousel-item">
-                <img src="{{ asset('assets/frontend/images/Group 152.png') }}" class="d-block w-100 img-fluid"
-                        alt="...">
-                    </div>
-                    <div class="carousel-item">
-                        <img src="{{ asset('assets/frontend/images/Group 152.png') }}" class="d-block w-100 img-fluid"
-                            alt="...">
-                    </div> --}}
                 </div>
-                {{-- <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="sr-only">Previous</span>
-              </a>
-              <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="sr-only">Next</span>
-              </a> --}}
             </div>
         </div>
         <div class="col-md-5 col-lg-6 cl-ffffff pl-5 pr-5">
             <div class="d-flex justify-content-between align-items-center">
                 <div class=" f-44 robotoMedium">{{ ucwords($specialist->username) }}</div>
                 <div id="time"></div>
-
-                {{-- <div id="clock" class="light">
-                  <div class="display d-flex align-items-baseline">
-                    <div class="digits"></div>
-                    <div class="ampm ml-2"></div>
-                  </div>
-                </div> --}}
             </div>
             <div class="d-flex border-bottom pb-3">
-                <div class="pr-3 robotoMedium">{{ ucwords($specialist->serviceCategory->category->title) }}</div>
+                <div class="pr-3 robotoMedium">{{ ucwords($category->title) }}</div>
                 @if($specialist->country)
                 <div class="border-left"></div>
                 <div class="pl-3 pr-3 robotoRegular">{{ ucfirst($specialist->country) }}</div>
@@ -404,7 +376,7 @@
                 </div>
             @endif
             
-            @if($specialist->availableTime)
+            {{-- @if($specialist->availableTime)
                 <div class="border-bottom pb-3  f-18">
                     <div class="robotoMedium f-18 pt-3">Days & Hours of Availability</div>
                     @foreach(['mon','tue','wed','thr','fri','sat','sun'] as $d)
@@ -413,83 +385,104 @@
                             <div class="row ml-3">
                                 <div class="col-md-3 text-left ">{{ ucfirst($d) }}</div>
                                 <div class="col-md-3 text-center">
-                                    {{ Carbon\Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d h:i:s',$arr[0]),config('app.timezone'))->timezone(Auth::user()->timezone)->format('h:i A') }}
+                                    {{ \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d h:i:s',$arr[0]),config('app.timezone'))->timezone(Auth::user()->timezone)->format('h:i A') }}
                                 </div>
                                 <div class="col-md-3 text-center"> - </div>
                                 <div class="col-md-3 text-center">
-                                    {{ Carbon\Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d h:i:s',$arr[1]),config('app.timezone'))->timezone(Auth::user()->timezone)->format('h:i A') }}
+                                    {{ \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d h:i:s',$arr[1]),config('app.timezone'))->timezone(Auth::user()->timezone)->format('h:i A') }}
                                 </div>
                             </div>
                         @endif
                     @endforeach
                 </div>
-            @endif
+            @endif --}}
         </div>
     </section>
 </section>
 
-{{-- @if($specialist->services->count() > 0)
-<section class="main_padding pt-5">
-    <div class="row m-0 p-0">
-        <div class="robotoMedium cl-000000 f-34 pt-2 d-flex align-items-end">Services:</div>
-        <div class="col-md-3 ml-auto p-0">
-            <div class="d-flex m-0">
-                <div class="pt-4 w-100">
-                    <input type="text" placeholder="Search for services"
-                        class="service_inpt robotoRegular h-44 cl-6b6b6b bg-transparent footer_input pt-2 pb-2 pl-3 w-100 rounded">
-                </div>
-                <div class="pt-4 pl-2">
-                    <button
-                        class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-3ac574  pt-2 pb-2 pl-2 pr-2 service_inpt_btn"
-                        type="button" onclick="inputSearchServices();"><img
-                            src="{{ asset('assets/frontend/images/Group 188.png ') }}" alt=""></button>
+@if($specialist->serviceCategory)
+    <section class="main_padding pt-5">
+        <div class="row m-0 p-0">
+            <div class="robotoMedium cl-000000 f-34 pt-2 d-flex align-items-end">Services:</div>
+            <div class="col-md-3 ml-auto p-0">
+                <div class="d-flex m-0">
+                    <div class="pt-4 w-100">
+                        <input type="text" placeholder="Search for services"
+                            class="service_inpt robotoRegular h-44 cl-6b6b6b bg-transparent footer_input pt-2 pb-2 pl-3 w-100 rounded">
+                    </div>
+                    <div class="pt-4 pl-2">
+                        <button
+                            class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-3ac574  pt-2 pb-2 pl-2 pr-2 service_inpt_btn"
+                            type="button" onclick="inputSearchServices();"><img
+                                src="{{ asset('assets/frontend/images/Group 188.png ') }}" alt=""></button>
+                    </div>
                 </div>
             </div>
+
+            <div class="table-responsive tableFixHead table_scroll mt-5 border robotoRegular">
+                <table id="boxes-list" class="table m-0 header-fixed">
+
+                    <thead class="sticky-top bg-white cl-3ac754 ">
+                        <tr class="bg-white robotoRegular ">
+                            <th scope="col">Service</th>
+                            <th scope="col">Duration</th>
+                            <th scope="col">Rate</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table_scroll services-table-body">
+                        @if($specialist->serviceCategory->t_15!=null)
+
+                            <tr class="border-bottom">
+                                <td>{{ ucwords($specialist->serviceCategory->name) }}</td>
+                                <td>15 Minutes</td>
+                                <td> ${{number_format(intval($specialist->serviceCategory->t_15)) }} (USD)</td>
+                                <td><a href="{{ route('appointment_request',encrypt($specialist->serviceCategory->id)) }}?time=15"
+                                        class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-3ac574  pl-5 pr-5 login_button">Book</a>
+                                </td>
+                            </tr>
+                        @endif
+                        @if($specialist->serviceCategory->t_30!=null)
+
+                            <tr class="border-bottom">
+                                <td>{{ ucwords($specialist->serviceCategory->name) }}</td>
+                                <td>30 Minutes</td>
+                                <td> ${{number_format(intval($specialist->serviceCategory->t_30)) }} (USD)</td>
+                                <td><a href="{{ route('appointment_request',encrypt($specialist->serviceCategory->id)) }}?time=30"
+                                        class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-3ac574  pl-5 pr-5 login_button">Book</a>
+                                </td>
+                            </tr>
+                        @endif
+                        @if($specialist->serviceCategory->t_45!=null)
+
+                            <tr class="border-bottom">
+                                <td>{{ ucwords($specialist->serviceCategory->name) }}</td>
+                                <td>45 Minutes</td>
+                                <td> ${{number_format(intval($specialist->serviceCategory->t_45)) }} (USD)</td>
+                                <td><a href="{{ route('appointment_request',encrypt($specialist->serviceCategory->id)) }}?time=45"
+                                        class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-3ac574  pl-5 pr-5 login_button">Book</a>
+                                </td>
+                            </tr>
+                        @endif
+                        @if($specialist->serviceCategory->t_60!=null)
+
+                            <tr class="border-bottom">
+                                <td>{{ ucwords($specialist->serviceCategory->name) }}</td>
+                                <td>60 Minutes</td>
+                                <td> ${{number_format(intval($specialist->serviceCategory->t_60)) }} (USD)</td>
+                                <td><a href="{{ route('appointment_request',encrypt($specialist->serviceCategory->id)) }}?time=60"
+                                        class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-3ac574  pl-5 pr-5 login_button">Book</a>
+                                </td>
+                            </tr>
+                        @endif  
+                        
+                    </tbody>
+                </table>
+            </div>
+
         </div>
-
-        <div class="table-responsive tableFixHead table_scroll mt-5 border robotoRegular">
-            <table id="boxes-list" class="table m-0 header-fixed">
-
-                <thead class="sticky-top bg-white cl-3ac754 ">
-                    <tr class="bg-white robotoRegular ">
-                        <th scope="col">No</th>
-                        <th scope="col">Service</th>
-                        <th scope="col">Category</th>
-                        <th scope="col">Subcategory</th>
-                        <th scope="col">Duration</th>
-                        <th scope="col">Rate</th>
-                        <th scope="col">Status</th>
-                        <th scope="col">Action</th>
-                    </tr>
-                </thead>
-                <tbody class="table_scroll services-table-body">
-                    @foreach($specialist->services as $key=>$service)
-                    <tr class="border-bottom">
-                        <th scope="row">{{ ++$key }}</th>
-                        <td>{{ ucwords($service->title) }}</td>
-                        <td>{{ ucwords($service->category->name) }}</td>
-                        @php
-                        $subcategories =
-                        App\SubCategory::whereIn('id',json_decode($service->sub_categories))->get()->pluck('name')->toArray();
-                        @endphp
-                        <td>{{ implode(',',array_map('ucwords',$subcategories)) }}</td>
-                        <td>{{ $service->timing }} Minutes</td>
-                        <td> ${{number_format(intval($service->rate)) }} (USD)</td>
-                        <td>{{ $service->status }}</td>
-                        <td><a href="{{ route('appointment_request',encrypt($service->id)) }}"
-                                class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-3ac574  pl-5 pr-5 login_button">Book</a>
-                        </td>
-                    </tr>
-
-                    @endforeach
-
-                </tbody>
-            </table>
-        </div>
-
-    </div>
-</section>
-@endif --}}
+    </section>
+@endif
 
 @if($specialist->portfolios->count() >0 )
     <section class=" main_padding pt-70 text-center">

@@ -17,7 +17,7 @@ class SpecialistCheck
     {
         if(Auth::check())
         {
-            if(Auth::user()->user_type=='specialist')
+            if(Auth::user()->type=='seller')
             {
                 return $next($request);
             }

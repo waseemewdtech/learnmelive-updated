@@ -15,7 +15,7 @@ class CheckSpecialist
      */
     public function handle($request, Closure $next)
     {
-        if ($request->user() && $request->user()->status == 'Active') {
+        if ($request->user() && $request->user()->approve == '1') {
 
             return $next($request);
         } else {
