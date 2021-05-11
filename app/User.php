@@ -6,6 +6,7 @@ use App\Models\Appointment;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Bid;
 
 class User extends Authenticatable
 {
@@ -57,6 +58,11 @@ class User extends Authenticatable
     	return $this->hasOne(ServiceCategory::class);
     }
 
+    public function serviceCategories()
+    {
+        return $this->hasMany(ServiceCategory::class);
+    }
+
     public function admin()
     {
         return $this->hasOne(Admin::class);
@@ -65,9 +71,15 @@ class User extends Authenticatable
     {
         return $this->hasOne(ServiceRequest::class);
     }
+
     public function appointment()
     {
         return $this->hasOne(Appointment::class);
+    }
+
+    public function specialistUser()
+    {
+        return $this->hasOne(Appointment::class,'specialist_id','id');
     }
 
     public function reply()
@@ -95,5 +107,10 @@ class User extends Authenticatable
     public function portfolios()
     {
         return $this->hasMany(Portfolio::class);
+    }
+
+    public function bids()
+    {
+        return $this->hasMany(Bid::class,'specialist_id','id');
     }
 }

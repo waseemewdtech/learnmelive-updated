@@ -7,6 +7,7 @@ use App\Models\Specialists\Service;
 use App\Specialist;
 use App\User;
 use App\Rating;
+use App\ServiceCategory;
 use App\ClientSpecialistDispute;
 
 use Illuminate\Database\Eloquent\Model;
@@ -15,16 +16,18 @@ class Appointment extends Model
 {
     public function service()
     {
-        return $this->belongsTo(Service::class);
+        return $this->belongsTo(ServiceCategory::class);
     }
     public function client()
     {
         return $this->belongsTo(Client::class);
     }
+
     public function specialist()
     {
-        return $this->belongsTo(Specialist::class);
+        return $this->belongsTo(User::class,'specialist_id','id');
     }
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -49,6 +52,7 @@ class Appointment extends Model
             '3' => 'Completed'
         ][$attribute];
     }
+    
     public function getPaymentStatusAttribute($attribute)
     {
         return [

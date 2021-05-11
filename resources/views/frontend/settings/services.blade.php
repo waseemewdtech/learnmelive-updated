@@ -39,8 +39,8 @@
 
 
 <p class="border-bottom pl-3 f-21 cl-616161">Services</p>
-{{-- <button title="Click to Add Service" data-toggle="modal" data-target="#addServiceModal"
-    class="btn btn-sm bg-3AC574 text-white m-2 add_service" style="float: right;">Add Service</button> --}}
+<button title="Click to Add Service" data-toggle="modal" data-target="#addServiceModal"
+    class="btn btn-sm bg-3AC574 text-white m-2 add_service" style="float: right;">Add Service</button>
 <div class="table-responsive ServiceTableData px-3" id="ServiceTableData">
     <table id="example1" class="table table-hover example1"  style="width:100%;">
         <thead>
@@ -91,31 +91,43 @@
                     <div class="modal-body">
                         <div class="form-group">
                             <label>Category</label>
-                            <select class="form-control" name="category" 
-                                style="width: 100%;">
-                                <option selected="" value="{{ $category->id }}">{{ $category->title }}</option>
+                            <select class="form-control" name="category" id="select_add_service_category" 
+                                style="width: 100%;" onchange="getCategoryTitle('select_add_service_category','name_add')">
+                                <option selected="selected" disabled>Choose category</option>
+                                @foreach ($categories as $cat)
+                                    <option value="{{ $cat->id }}">{{ $cat->title }}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div class="form-group sub_categories"></div>
                         <div class="form-group">
-                            <label for="title">Notes*</label>
-                            <input id="title" type="text" class="form-control text-capitalize" name="title"
-                                value="{{ $category->title }}" autocomplete="title" placeholder="Enter Service Title" readonly="" />
+                            <label for="name_add">Notes*</label>
+                            <input id="name_add" type="text" class="form-control text-capitalize" name="name"
+                                value="" placeholder="Enter Service Title" readonly="" />
                         </div>
-                        <div class="form-group mb-0">
-                            <label for="timing">Timing*</label>
-                            <select id="timing" type="number" class="form-control text-capitalize" name="timing">
-                                <option selected="" disabled="" hidden="">Enter Service Timing</option>
-                                <option value="15">15</option>
-                                <option value="30">30</option>
-                                <option value="45">45</option>
-                                <option value="60">60</option>
-                            </select>                               
-                        </div>
+                        
                         <div class="form-group">
-                            <label for="rate">Rate*</label>
-                            <input id="rate" type="number" class="form-control text-capitalize" name="rate"
-                                value="{{ old('rate') }}" autocomplete="rate" placeholder="Enter Service Rate" />
+                            <label for="t_15">Time 15</label>
+                            <input id="t_15" type="number" class="form-control text-capitalize" name="t_15"
+                                value=""/>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="t_30">Time 30</label>
+                            <input id="t_30" type="number" class="form-control text-capitalize" name="t_30"
+                                value=""/>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="t_45">Time 45</label>
+                            <input id="t_45" type="number" class="form-control text-capitalize" name="t_45"
+                                value=""/>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="t_60">Time 60</label>
+                            <input id="t_60" type="number" class="form-control text-capitalize" name="t_60"
+                                value=""/>
                         </div>
 
                        {{--  <div class="form-group">
@@ -160,8 +172,8 @@
                     <div class="modal-body">
                         <div class="form-group">
                             <label>Category</label>
-                            <select class="form-control" name="category" id="select_service_category" 
-                                style="width: 100%;" onchange="getCategoryTitle()">
+                            <select class="form-control" name="category" id="select_update_service_category" 
+                                style="width: 100%;" onchange="getCategoryTitle('select_update_service_category','update-note')">
                                 <option selected="selected" disabled>Choose category</option>
                                 @foreach ($categories as $cat)
                                     <option {{ ($category->id==$cat->id)? 'selected':'' }} value="{{ $cat->id }}">{{ $cat->title }}</option>
@@ -252,8 +264,9 @@
 
 <script>
     
-    function getCategoryTitle(){
-        $('#update-note').val($('#select_service_category option:selected').text());
+    function getCategoryTitle(sel,inpt)
+    {
+        $('#'+inpt).val($('#'+sel+' option:selected').text());
     }
 
     if(window.location.href == "{{ url('services') }}?add_new"){

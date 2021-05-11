@@ -15,7 +15,7 @@ class Bid extends Model
     }
     public function specialist()
     {
-        return $this->belongsTo(Specialist::class);
+        return $this->belongsTo(User::class,'specialist_id','id');
     }
     public function user()
     {

@@ -1,4 +1,4 @@
-@extends('layouts.frontend.setting') @section('title','Profile') {{-- head start --}} @section('extra-css')
+@extends('layouts.frontend.setting') @section('title','Appointments') {{-- head start --}} @section('extra-css')
 <link rel="stylesheet" type="text/css" href="{{ asset('assets/frontend/css/dashboard.css') }}" />
 <link rel="stylesheet" type="text/css" href="{{ asset('assets/frontend/css/register.css') }}" />
 <link rel="stylesheet" type="text/css" href="{{ asset('assets/frontend/css/login_register_common.css') }}" />
@@ -40,7 +40,7 @@
         </thead>
         <tbody>
             @foreach ($appointments as $key => $appointment) 
-            @php $tz = Auth::user()->user_type=='specialist' ? $appointment->specialist->user->time_zone : $appointment->user->time_zone @endphp
+            @php $tz = Auth::user()->type=='seller' ? $appointment->specialist->timezone : $appointment->user->timezone @endphp
             <tr class="border-0">
                 <td class=" border-0">
                     {{-- <section class="p-100"> --}}
@@ -48,31 +48,31 @@
                         <div class="row pt-3 pb-3  box_shadow1 ml-0 mr-0 borderRadius-10px justify-content-around">
                             <div class="text-center">
                                 <p class="robotoRegular cl-515151 f-13 m-0">
-                                    {{ date('F', strtotime(getTimeZoneDate('America/Chicago',$tz, $appointment->date.' '.$appointment->time))) }}
+                                    {{ date('F', strtotime(getTimeZoneDate(config('app.timezone'),$tz, $appointment->date.' '.$appointment->time))) }}
                                 </p>
                                 <p class="f-45 m-0 cl-515151 robotoRegular">
-                                    {{ date('d', strtotime(getTimeZoneDate('America/Chicago',$tz, $appointment->date.' '.$appointment->time))) }}
+                                    {{ date('d', strtotime(getTimeZoneDate(config('app.timezone'),$tz, $appointment->date.' '.$appointment->time))) }}
                                 </p>
                                 <p class="f-12 robotoRegular m-0">
-                                    {{ date('Y', strtotime(getTimeZoneDate('America/Chicago',$tz, $appointment->date.' '.$appointment->time))) }}
+                                    {{ date('Y', strtotime(getTimeZoneDate(config('app.timezone'),$tz, $appointment->date.' '.$appointment->time))) }}
                                 </p>
                                 <p class="f-8 robotoRegular m-0">
-                                    {{ getTimeZoneTime('America/Chicago',$tz,$appointment->date.' '.$appointment->time) }}
+                                    {{ getTimeZoneTime(config('app.timezone'),$tz,$appointment->date.' '.$appointment->time) }}
                                 </p>
                             </div>
                             <div class="height"></div>
 
                             <!-- 2 -->
                             <div class="col-md-5 col-lg-5 p-0 d-flex justify-content-center align-items-start flex-column">
-                                <p>{{ Auth::user()->user_type=='specialist' ? $appointment->user->username : $appointment->specialist->user->username}}</p>
+                                <p>{{ Auth::user()->type=='seller' ? $appointment->user->username : $appointment->specialist->username}}</p>
                                 <div class="d-flex">
                                     <div class="f-18 d-flex align-items-center cl-000000 robotoRegular">
-                                        {{ $appointment->service->title }}
+                                        {{ $appointment->service->name }}
                                     </div>
                                     <div class="f-24 pl-2 cl-616161 robotoRegular">${{ $appointment->rate }}</div>
                                 </div>
                                 <div class="robotoRegular cl-616161">
-                                    {{ ucfirst($appointment->service->timing)  }} Minutes
+                                    {{ ucfirst($appointment->service_time)  }} Minutes
                                 </div>
                                 {{--
                                 <div class="f-14 cl-9c9c9c pt-1">6656 us 301, Riverview, 33578</div>
@@ -82,7 +82,7 @@
                             <!-- 3 -->
                             <div class="text-center d-flex justify-content-center flex-column align-items-center">
                                 @if ($appointment->status != "Completed") 
-                                    @if (Auth::user()->user_type=='specialist')
+                                    @if (Auth::user()->type=='seller')
                                         @if ($appointment->status == "Approved" && $appointment->payment_status != "Paid")
                                             <div class="pt-3"><button class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-bbbbbb border-0 buttonBoxShadow pt-2 pb-2 robotoRegular pl-4 pr-4">Pending Client Payment</button></div>
                                         @else
@@ -92,7 +92,8 @@
         
                                                     <input type="hidden" name="status" value="{{ ($appointment->status == 'Cancelled')? '1': (($appointment->status == 'Pending')? '1':'3') }}" />
                                                     <button type="submit" class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-3AC574 border-0 buttonBoxShadow pt-2 pb-2 robotoRegular pl-4 pr-4">
-                                                        {{ ($appointment->status == 'Cancelled')? 'Accept': ($appointment->status == 'Pending')? 'Accept':'Completed' }}
+                                                        
+                                                        {{ $appointment->status == 'Cancelled'? 'Accept': ($appointment->status == 'Pending'? 'Accept':'Completed') }}
                                                     </button>
                                                 </form>
                                             </div>

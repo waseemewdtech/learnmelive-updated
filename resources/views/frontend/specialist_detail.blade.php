@@ -376,7 +376,7 @@
                 </div>
             @endif
             
-            {{-- @if($specialist->availableTime)
+            @if($specialist->availableTime)
                 <div class="border-bottom pb-3  f-18">
                     <div class="robotoMedium f-18 pt-3">Days & Hours of Availability</div>
                     @foreach(['mon','tue','wed','thr','fri','sat','sun'] as $d)
@@ -385,22 +385,23 @@
                             <div class="row ml-3">
                                 <div class="col-md-3 text-left ">{{ ucfirst($d) }}</div>
                                 <div class="col-md-3 text-center">
-                                    {{ \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d h:i:s',$arr[0]),config('app.timezone'))->timezone(Auth::user()->timezone)->format('h:i A') }}
+                                    {{ \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d h:i:s',$arr[0]/1000),config('app.timezone'))->timezone(Auth::user()->timezone)->format('h:i A') }}
                                 </div>
                                 <div class="col-md-3 text-center"> - </div>
                                 <div class="col-md-3 text-center">
-                                    {{ \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d h:i:s',$arr[1]),config('app.timezone'))->timezone(Auth::user()->timezone)->format('h:i A') }}
+                                    {{ \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d h:i:s',$arr[1]/1000),config('app.timezone'))->timezone(Auth::user()->timezone)->format('h:i A') }}
                                 </div>
                             </div>
                         @endif
                     @endforeach
                 </div>
-            @endif --}}
+            @endif
         </div>
     </section>
 </section>
 
-@if($specialist->serviceCategory)
+
+@if($specialist->serviceCategories->count() >0)
     <section class="main_padding pt-5">
         <div class="row m-0 p-0">
             <div class="robotoMedium cl-000000 f-34 pt-2 d-flex align-items-end">Services:</div>
@@ -431,50 +432,54 @@
                         </tr>
                     </thead>
                     <tbody class="table_scroll services-table-body">
-                        @if($specialist->serviceCategory->t_15!=null)
+                        @foreach($specialist->serviceCategories as $serviceCategory)
 
-                            <tr class="border-bottom">
-                                <td>{{ ucwords($specialist->serviceCategory->name) }}</td>
-                                <td>15 Minutes</td>
-                                <td> ${{number_format(intval($specialist->serviceCategory->t_15)) }} (USD)</td>
-                                <td><a href="{{ route('appointment_request',encrypt($specialist->serviceCategory->id)) }}?time=15"
-                                        class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-3ac574  pl-5 pr-5 login_button">Book</a>
-                                </td>
-                            </tr>
-                        @endif
-                        @if($specialist->serviceCategory->t_30!=null)
+                            @if($specialist->serviceCategory->t_15!=null)
 
-                            <tr class="border-bottom">
-                                <td>{{ ucwords($specialist->serviceCategory->name) }}</td>
-                                <td>30 Minutes</td>
-                                <td> ${{number_format(intval($specialist->serviceCategory->t_30)) }} (USD)</td>
-                                <td><a href="{{ route('appointment_request',encrypt($specialist->serviceCategory->id)) }}?time=30"
-                                        class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-3ac574  pl-5 pr-5 login_button">Book</a>
-                                </td>
-                            </tr>
-                        @endif
-                        @if($specialist->serviceCategory->t_45!=null)
+                                <tr class="border-bottom">
+                                    <td>{{ ucwords($serviceCategory->name) }}</td>
+                                    <td>15 Minutes</td>
+                                    <td> ${{number_format(intval($serviceCategory->t_15)) }} (USD)</td>
+                                    <td><a href="{{ route('appointment_request',encrypt($serviceCategory->id)) }}?time=15"
+                                            class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-3ac574  pl-5 pr-5 login_button">Book</a>
+                                    </td>
+                                </tr>
+                            @endif
+                            @if($serviceCategory->t_30!=null)
 
-                            <tr class="border-bottom">
-                                <td>{{ ucwords($specialist->serviceCategory->name) }}</td>
-                                <td>45 Minutes</td>
-                                <td> ${{number_format(intval($specialist->serviceCategory->t_45)) }} (USD)</td>
-                                <td><a href="{{ route('appointment_request',encrypt($specialist->serviceCategory->id)) }}?time=45"
-                                        class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-3ac574  pl-5 pr-5 login_button">Book</a>
-                                </td>
-                            </tr>
-                        @endif
-                        @if($specialist->serviceCategory->t_60!=null)
+                                <tr class="border-bottom">
+                                    <td>{{ ucwords($serviceCategory->name) }}</td>
+                                    <td>30 Minutes</td>
+                                    <td> ${{number_format(intval($serviceCategory->t_30)) }} (USD)</td>
+                                    <td><a href="{{ route('appointment_request',encrypt($serviceCategory->id)) }}?time=30"
+                                            class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-3ac574  pl-5 pr-5 login_button">Book</a>
+                                    </td>
+                                </tr>
+                            @endif
+                            @if($serviceCategory->t_45!=null)
 
-                            <tr class="border-bottom">
-                                <td>{{ ucwords($specialist->serviceCategory->name) }}</td>
-                                <td>60 Minutes</td>
-                                <td> ${{number_format(intval($specialist->serviceCategory->t_60)) }} (USD)</td>
-                                <td><a href="{{ route('appointment_request',encrypt($specialist->serviceCategory->id)) }}?time=60"
-                                        class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-3ac574  pl-5 pr-5 login_button">Book</a>
-                                </td>
-                            </tr>
-                        @endif  
+                                <tr class="border-bottom">
+                                    <td>{{ ucwords($serviceCategory->name) }}</td>
+                                    <td>45 Minutes</td>
+                                    <td> ${{number_format(intval($serviceCategory->t_45)) }} (USD)</td>
+                                    <td><a href="{{ route('appointment_request',encrypt($serviceCategory->id)) }}?time=45"
+                                            class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-3ac574  pl-5 pr-5 login_button">Book</a>
+                                    </td>
+                                </tr>
+                            @endif
+                            @if($serviceCategory->t_60!=null)
+
+                                <tr class="border-bottom">
+                                    <td>{{ ucwords($serviceCategory->name) }}</td>
+                                    <td>60 Minutes</td>
+                                    <td> ${{number_format(intval($serviceCategory->t_60)) }} (USD)</td>
+                                    <td><a href="{{ route('appointment_request',encrypt($serviceCategory->id)) }}?time=60"
+                                            class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-3ac574  pl-5 pr-5 login_button">Book</a>
+                                    </td>
+                                </tr>
+                            @endif  
+
+                        @endforeach
                         
                     </tbody>
                 </table>

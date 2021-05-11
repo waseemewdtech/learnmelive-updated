@@ -45,7 +45,7 @@
             </div>
         </div>
     @endif
-    @if ($errors->any())
+    {{-- @if ($errors->any())
         <div class="container-fluid">
             <div class="alert alert-danger alert-block" role="alert">
                 <button type="button" class="close" data-dismiss="alert">×</button>
@@ -56,5 +56,5 @@
                 </ul>
             </div>
         </div>
-    @endif
+    @endif --}}
 </div>

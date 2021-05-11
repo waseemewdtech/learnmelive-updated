@@ -485,7 +485,6 @@ span.prefix{
 
         <section class=" pl-3 pt-70" id="post_job">
             @include('common.messages')
-
             <div class="row mt-2 mb-5 px-3 mx-1 ">
                 <div class="col-md-12 px-5 borderRadius-10px box_shadow1 p-0">
                     <div class="d-flex mt-3 justify-content-between ">
@@ -496,37 +495,44 @@ span.prefix{
                     <form action="{{ route('servicerequests.store') }}" method="post" enctype="multipart/form-data">
                         @csrf
                         <div class="row">
+
                             <div class="form-group col-md-12">
-                                <label for="title">Title</label>
-                                <input type="text" name="title" id="title" class="form-control">
-                            </div>
-                            <div class="form-group col-md-4">
                                 <label for="title">Category</label>
-                                <select class="form-control select2"  name="category" id="select_category" style="width: 100%;"  onchange="getSubCategories(this);">
-                                            <option selected="selected" disabled>Choose category</option>
-                                            @foreach ($categories as $category)
-                                                <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                            @endforeach
-                                        </select>
+                                <select class="form-control select2" onchange="getCategoryTitle('select_category','title')"  name="category" id="select_category" style="width: 100%;">
+                                    <option selected="selected" disabled>Choose category</option>
+                                    @foreach ($categories as $category)
+                                        <option {{ old('category')==$category->id?'selected':"" }} value="{{ $category->id }}">{{ $category->title }}</option>
+                                    @endforeach
+                                </select>
+                                @error('category')
+                                    <p class="mt-1 text-danger">{{ $message }}</p>
+                                @enderror
                             </div>
-                            <div class="form-group col-md-4">
-                                <div class="sub_categories">
-                                                    
-                                </div>
+
+                            <div class="form-group col-md-6">
+                                <label for="title">Title</label>
+                                <input type="text" name="title" id="title" class="form-control" readonly="">
                             </div>
-                            <div class="form-group col-md-4"> 
+                            
+                            <div class="form-group col-md-6"> 
                                 <label for="rate_from">What is your budget for this service?</label>
                                 <div class="lable">
                                 <span class="prefix">$</span>
-                                <input class="snehainput border-0" type="number" name="budget" id="budget" class="form-control" placeholder="5 Minimum (USD)"/>
+                                <input class="snehainput border-0" type="number" name="budget" id="budget" onchange="budgetValidate(this);" class="form-control" placeholder="5 Minimum (USD)"/>
                                 </div>
+                                @error('budget')
+                                    <p class="mt-1 text-danger">{{ $message }}</p>
+                                @enderror
                             </div>
                             
                         </div>
                         
-                        <div class="form-group">
+                        <div class="form-group col-md-12">
                             <label for="description">Description*</label>
                             <textarea id="description" class="form-control summernote" name="description" required rows="5"> </textarea>
+                            @error('description')
+                                    <p class="mt-1 text-danger">{{ $message }}</p>
+                                @enderror
                         </div>
                         <div class="form-group">
                             <label for="description">Attach Files (Optional)</label>
@@ -558,8 +564,6 @@ span.prefix{
                                 <tr class="text-uppercase">
                                     <th scope="col">#</th>
                                     <th scope="col">Title</th>
-                                    <th scope="col">Category</th>
-                                    <th scope="col">Sub Categories</th>
                                     <th scope="col">Description</th>
                                     <th scope="col">Budget</th>
                                     <th scope="col">Action</th>
@@ -573,11 +577,6 @@ span.prefix{
                                         <tr id="target_" class="border-bottom">
                                             <td class="border-0">{{++$i}}</td>
                                             <td class="border-0">{{ ucwords($request->title) }}</td>
-                                            <td class="border-0">{{ ucwords($request->category->name) }}</td>
-                                            @php
-                                                $subcategories = App\SubCategory::whereIn('id',json_decode($request->subcategories))->get()->pluck('name')->toArray();
-                                            @endphp 
-                                            <td>{{ implode(',',array_map('ucwords',$subcategories)) }}</td>
                                             <td class="border-0">{{ ucfirst($request->description) }}</td>
                                             <td class="border-0">$ {{ $request->budget }}</td>
                                             <td>
@@ -609,12 +608,12 @@ span.prefix{
                                                                                     <div class="col-md-9 pl-5 pr-0">
                                                                                         <div class="d-flex">
 
-                                                                                            <div style="height: 50px;width:50px;" class="mr-2"><img src="{{ $service->specialist->user->avatar }}" class="rounded-circle w-100 h-100" alt="" srcset=""></div>
+                                                                                            <div style="height: 50px;width:50px;" class="mr-2"><img src="{{ $service->specialist->picture }}" class="rounded-circle w-100 h-100" alt="" srcset=""></div>
                                                                                             <div class="">
                                                                                             <div class="cl-000000 robotoMedium f-24 text-left">{{ ucfirst($request->title) }}</div>
                                                                                             <div class="d-flex">
                                                                                                 <div class="cl-3ac754 f-14 robotoRegular d-flex align-items-center ">Bid by:</div>
-                                                                                                <div class="pl-1 cl-6b6b6b f-14 robotoRegular d-flex align-items-center">{{ $service->specialist->user->username }} </div>
+                                                                                                <div class="pl-1 cl-6b6b6b f-14 robotoRegular d-flex align-items-center">{{ $service->specialist->username }} </div>
                                                                                             </div>
                                                                                             <div class="w-100 text-justify f-18 robotoRegular cl-6b6b6b pr-5" >
                                                                                                 {{$service->perposal}}
@@ -631,7 +630,7 @@ span.prefix{
                                                                                                 <div></div>
                                                                                             </div>
                                                                                             @if($service->attachment !=null)
-        
+
                                                                                                 <div class="d-flex pt-2">
                                                                                                     <div>
                                                                                                         <div class="d-flex">
@@ -656,8 +655,7 @@ span.prefix{
                                                                                         <div class="f-21 cl-6b6b6b">USD</div>
                                                                                     </div>
                                                                                     <div class="col-md-1">
-                                                                                        {{-- <form action="{{ route('bids.update',$service->id) }}" method="post" class="bid_accept">
-                                                                                        @csrf @method('PUT') --}}
+                                                                                        
                                                                                         <input type="hidden" name="url" value="{{ route('bids.update',$service->id) }}" class="url">
                                                                                         <input type="hidden" name="status" value="{{ ($service->status == 'Declined') ? 1 :0 }}" class="status">
                                                                                         <button type="button" class="btn btn-sm {{ ($service->status == 'Declined') ? 'btn-success' : 'btn-danger' }}  action_btn change_status_{{ $service->id }}">{{ ($service->status == 'Declined') ? 'Accept' : 'Ignore' }} </button>
@@ -718,6 +716,16 @@ span.prefix{
 @section('extra-script') 
     <script>
 
+        function getCategoryTitle(sel,inpt)
+        {
+            $('#'+inpt).val($('#'+sel+' option:selected').text());
+        }
+
+        function budgetValidate(ele){
+            if($(ele).val()<=5){
+                $(ele).val(5);
+            }
+        }
 // $('.bid_accept').on('submit', function(e) {
 //     alert($(this).serialize())
 //     e.preventDefault(); 

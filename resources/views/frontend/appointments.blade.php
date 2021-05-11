@@ -27,18 +27,33 @@
             </div>
         </div>
 
-        {{-- @foreach(json_decode($service->specialist->opening_hours) as $key =>$d)
-            <input type="hidden" name="sDays[]" id="sDays" value="{{ucfirst($key)}}">
-            <input type="hidden" name="{{ucfirst($key)}}_from"  value="{{ $d[0] }}">
-            <input type="hidden" name="{{ucfirst($key)}}_to"  value="{{ $d[1] }}">
-        @endforeach --}}
+        @foreach(['mon','tue','wed','thr','fri','sat','sun'] as $d)
+            @if($d=='mon')@php $cDay='monday'@endphp
+            @elseif($d=='tue')@php $cDay='tuesday'@endphp
+            @elseif($d=='wed')@php $cDay='wednesday'@endphp
+            @elseif($d=='thr')@php $cDay='thursday'@endphp
+            @elseif($d=='fri')@php $cDay='friday'@endphp
+            @elseif($d=='sat')@php $cDay='saturday'@endphp
+            @elseif($d=='sun')@php $cDay='sunday'@endphp
+            @endif
+            
+            @if($specialist->availableTime->$d !="Closed")
+                @php $arr = explode('~',$specialist->availableTime->$d); @endphp
+                <input type="hidden" name="sDays[]" id="sDays" value="{{ucfirst($cDay)}}">
+                <input type="hidden" name="{{ucfirst($cDay)}}_from"  value="{{ $arr[0]/1000 }}">
+                <input type="hidden" name="{{ucfirst($cDay)}}_to"  value="{{ $arr[1]/1000 }}">
+            @endif
+            
+        @endforeach
         
-        {{-- <form action="{{ route('store.appointment') }}" method="POST">
+        <form action="{{ route('store.appointment') }}" method="POST">
             @csrf
-            <input type="hidden" name="rate" id="rate" value="{{ $service->rate }}" />
+            @php $tRate = 't_'.$time @endphp
+            <input type="hidden" name="rate" id="rate" value="{{ $service->$tRate }}" />
             <input type="hidden" name="service_id" id="service_id" value="{{ $service->id }}" />
-            <input type="hidden" name="time" id="time" value="{{ $service->timing }}" />
-            <input type="hidden" name="specialist_id" id="specialist_id" value="{{ $service->specialist_id }}" />
+            <input type="hidden" name="time" id="time" value="" />
+            <input type="hidden" name="service_time" id="time" value="{{ $time }}" />
+            <input type="hidden" name="specialist_id" id="specialist_id" value="{{ $specialist->id }}" />
             <input type="hidden" name="date" id="date" value="" />
             <div class="row m-0 justify-content-between flex-nowrap">
                 <div class="col-lg-3 col-md-3 light mw-33 p-0">
@@ -119,70 +134,85 @@
 
                 <div class="col-lg-9 col-md-9 mw-67 pl-3 pb-4 pr-3 calender_Shadow borderRadius-12px">
 
-                    @foreach(json_decode($service->specialist->opening_hours) as $l=>$t)
-                        <div class="all-day {{ucfirst($l)}}" style="display: none;">
+                    @foreach(['mon','tue','wed','thr','fri','sat','sun'] as $d)
+                        @if($specialist->availableTime->$d !="Closed")
+                            @php $arr = explode('~',$specialist->availableTime->$d); @endphp
+                            @if($d=='mon')@php $cDay='monday'@endphp
+                            @elseif($d=='tue')@php $cDay='tuesday'@endphp
+                            @elseif($d=='wed')@php $cDay='wednesday'@endphp
+                            @elseif($d=='thr')@php $cDay='thursday'@endphp
+                            @elseif($d=='fri')@php $cDay='friday'@endphp
+                            @elseif($d=='sat')@php $cDay='saturday'@endphp
+                            @elseif($d=='sun')@php $cDay='sunday'@endphp
+                            @endif
+                            <div class="all-day {{ucfirst($cDay)}}" style="display: none;">
                             
-                            <div class="row m-0 pt-4">
-                                <div class="col-md-6 col-lg-6 p-0">
-                                    <div class="d-flex">
-                                        <div><img src="{{ asset('assets/frontend/images/Group198.png') }}" alt="" class="img-fluid w-75" /></div>
-                                        <div class="f-21 robotoRegular cl-000000 pl-3">
-                                            Available Time
-                                            <div class="f-16 cl-878787">{{ getTimeZoneTime($service->specialist->user->time_zone,Auth::user()->time_zone,$t[0]) }} {{ getTimeZoneTime($service->specialist->user->time_zone,Auth::user()->time_zone,$t[1]) }}</div>
+                                <div class="row m-0 pt-4">
+                                    <div class="col-md-6 col-lg-6 p-0">
+                                        <div class="d-flex">
+                                            <div><img src="{{ asset('assets/frontend/images/Group198.png') }}" alt="" class="img-fluid w-75" /></div>
+                                            <div class="f-21 robotoRegular cl-000000 pl-3">
+                                                Available Time
+                                                <div class="f-16 cl-878787">{{ \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d h:i:s',$arr[0]/1000),config('app.timezone'))->timezone(Auth::user()->timezone)->format('h:i A') }} {{ \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d h:i:s',$arr[1]/1000),config('app.timezone'))->timezone(Auth::user()->timezone)->format('h:i A') }}</div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                
-                            </div>
-                            @php 
-                                $f_hour = explode(':' ,$t[0])[0];
-                                $f_d = explode(' ' ,$t[0])[1];
-                                $t_hour = explode(':', $t[1])[0];
-                                $t_d = explode(' ' ,$t[1])[1];
-                                if($t_d=='PM')
-                                {
-                                    $t_hour +=12; 
-                                }
-                                $p_t = [15,30,45,0];
-                                $current_date = date('Y-m-d');
-                                $start = new DateTime($current_date." ".$t[0]);
-                                $end = new DateTime($current_date." ".$t[1]);
-                                $current = clone $start;
-                            @endphp
-                        
-                            <div class="row pt-4 ml-1 mr-1">
-                                
-                                @while ($current <= $end)
-                                    <div class="ml-4 robotoRegular cl-878787 col-md-2 text-center p-0">
-                                        <label class="border pt-2 rounded w-100 pb-2">
-                                            @php $tz = 'America/Chicago'; @endphp
-                                            <input type="radio" name="time" class="bg-success btnclass" value="{{ getTimeZoneTime($service->specialist->user->time_zone,Auth::user()->time_zone,$current->format("g:i A"))}}" @if (in_array(getTimeZoneTime($service->specialist->user->time_zone,$tz,$current->format("g:i A")),$appointments)) disabled @endif/>
-                                            <span class="checkmark pl-2">{{ getTimeZoneTime($service->specialist->user->time_zone,Auth::user()->time_zone,$current->format("g:i A")) }}</span>
-                                        </label>
-                                    </div>
-                                    @php $current->modify("+30 minutes") @endphp
-                                @endwhile
-                            </div>
-                            <div class="border w-100 mt-5"></div>
-                            
-                            <div class="row m-0 pt-3">
-                                <div class="col-md-6 p-0">
                                     
                                 </div>
-                                <div class="col-md-6 pl-0 ml-auto text-end pr-0">
-                                    <button type="submit" class="btn btn-outline-success my-2 d-flex justify-content-end my-sm-0 cl-ffffff bg-3ac574 pl-5 pr-5 login_button appointment-btn ml-auto" type="submit">Submit</button>
+                                @php
+                                    $f_time = date('h:i A',$arr[0]/1000); 
+                                    $t_time = date('h:i A',$arr[1]/1000); 
+                                    $f_hour = explode(':' ,$f_time)[0];
+                                    $f_d = explode(' ' ,$f_time)[1];
+                                    $t_hour = explode(':', $t_time)[0];
+                                    $t_d = explode(' ' ,$t_time)[1];
+                                    if($t_d=='PM')
+                                    {
+                                        $t_hour +=12; 
+                                    }
+                                    $p_t = [15,30,45,0];
+                                    $current_date = date('Y-m-d');
+                                    $start = new DateTime($current_date." ".$f_time);
+                                    $end = new DateTime($current_date." ".$t_time);
+                                    $current = clone $start;
+                                @endphp
+                            
+                                <div class="row pt-4 ml-1 mr-1">
+                                    
+                                    @while ($current <= $end)
+                                        <div class="ml-4 robotoRegular cl-878787 col-md-2 text-center p-0">
+                                            <label class="border pt-2 rounded w-100 pb-2">
+                                                
+                                                <input type="radio" name="time" class="bg-success btnclass" value="{{ getTimeZoneTime(config('app.timezone'),Auth::user()->timezone,$current->format("g:i A"))}}" @if (in_array(getTimeZoneTime(config('app.timezone'),config('app.timezone'),$current->format("g:i A")),$appointments)) disabled @endif/>
+                                                <span class="checkmark pl-2">{{ getTimeZoneTime(config('app.timezone'),Auth::user()->timezone,$current->format("g:i A")) }}</span>
+                                            </label>
+                                        </div>
+                                        @php $current->modify("+30 minutes") @endphp
+                                    @endwhile
                                 </div>
+                                <div class="border w-100 mt-5"></div>
+                                
+                                <div class="row m-0 pt-3">
+                                    <div class="col-md-6 p-0">
+                                        
+                                    </div>
+                                    <div class="col-md-6 pl-0 ml-auto text-end pr-0">
+                                        <button type="submit" class="btn btn-outline-success my-2 d-flex justify-content-end my-sm-0 cl-ffffff bg-3ac574 pl-5 pr-5 login_button appointment-btn ml-auto" type="submit">Submit</button>
+                                    </div>
+                                </div>
+
                             </div>
 
-                        </div>
+                        @endif
+                        
                     @endforeach
                     
                 </div>
             </div>
-        </form> --}}
+        </form>
     </section>
 
-    @if($specialist->serviceCategory)
+    @if($specialist->serviceCategories->count() >0)
         <section class="main_padding pt-5">
             <div class="row m-0 p-0">
                 <div class="robotoMedium cl-000000 f-34 pt-2 d-flex align-items-end">Services:</div>
@@ -213,54 +243,52 @@
                             </tr>
                         </thead>
                         <tbody class="table_scroll services-table-body">
-                            
-                            @if($specialist->serviceCategory->t_15!=null && $time!=15)
+                            @foreach($specialist->serviceCategories as $serviceCategory)
+                                @if($specialist->serviceCategory->t_15!=null)
 
-                                <tr class="border-bottom">
-                                    <td>{{ ucwords($specialist->serviceCategory->name) }}</td>
-                                    <td>15 Minutes</td>
-                                    <td> ${{number_format(intval($specialist->serviceCategory->t_15)) }} (USD)</td>
-                                    <td><a href="{{ route('appointment_request',encrypt($specialist->serviceCategory->id)) }}?time=15"
-                                            class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-3ac574  pl-5 pr-5 login_button">Book</a>
-                                    </td>
-                                </tr>
-                            @endif
+                                        <tr class="border-bottom">
+                                            <td>{{ ucwords($serviceCategory->name) }}</td>
+                                            <td>15 Minutes</td>
+                                            <td> ${{number_format(intval($serviceCategory->t_15)) }} (USD)</td>
+                                            <td><a href="{{ route('appointment_request',encrypt($serviceCategory->id)) }}?time=15"
+                                                    class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-3ac574  pl-5 pr-5 login_button">Book</a>
+                                            </td>
+                                        </tr>
+                                    @endif
+                                    @if($serviceCategory->t_30!=null)
 
-                            @if($specialist->serviceCategory->t_30!=null && $time!=30)
+                                        <tr class="border-bottom">
+                                            <td>{{ ucwords($serviceCategory->name) }}</td>
+                                            <td>30 Minutes</td>
+                                            <td> ${{number_format(intval($serviceCategory->t_30)) }} (USD)</td>
+                                            <td><a href="{{ route('appointment_request',encrypt($serviceCategory->id)) }}?time=30"
+                                                    class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-3ac574  pl-5 pr-5 login_button">Book</a>
+                                            </td>
+                                        </tr>
+                                    @endif
+                                    @if($serviceCategory->t_45!=null)
 
-                                <tr class="border-bottom">
-                                    <td>{{ ucwords($specialist->serviceCategory->name) }}</td>
-                                    <td>30 Minutes</td>
-                                    <td> ${{number_format(intval($specialist->serviceCategory->t_30)) }} (USD)</td>
-                                    <td><a href="{{ route('appointment_request',encrypt($specialist->serviceCategory->id)) }}?time=30"
-                                            class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-3ac574  pl-5 pr-5 login_button">Book</a>
-                                    </td>
-                                </tr>
-                            @endif
+                                        <tr class="border-bottom">
+                                            <td>{{ ucwords($serviceCategory->name) }}</td>
+                                            <td>45 Minutes</td>
+                                            <td> ${{number_format(intval($serviceCategory->t_45)) }} (USD)</td>
+                                            <td><a href="{{ route('appointment_request',encrypt($serviceCategory->id)) }}?time=45"
+                                                    class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-3ac574  pl-5 pr-5 login_button">Book</a>
+                                            </td>
+                                        </tr>
+                                    @endif
+                                    @if($serviceCategory->t_60!=null)
 
-                            @if($specialist->serviceCategory->t_45!=null && $time!=45)
-
-                                <tr class="border-bottom">
-                                    <td>{{ ucwords($specialist->serviceCategory->name) }}</td>
-                                    <td>45 Minutes</td>
-                                    <td> ${{number_format(intval($specialist->serviceCategory->t_45)) }} (USD)</td>
-                                    <td><a href="{{ route('appointment_request',encrypt($specialist->serviceCategory->id)) }}?time=45"
-                                            class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-3ac574  pl-5 pr-5 login_button">Book</a>
-                                    </td>
-                                </tr>
-                            @endif
-
-                            @if($specialist->serviceCategory->t_60!=null && $time!=60)
-
-                                <tr class="border-bottom">
-                                    <td>{{ ucwords($specialist->serviceCategory->name) }}</td>
-                                    <td>60 Minutes</td>
-                                    <td> ${{number_format(intval($specialist->serviceCategory->t_60)) }} (USD)</td>
-                                    <td><a href="{{ route('appointment_request',encrypt($specialist->serviceCategory->id)) }}?time=60"
-                                            class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-3ac574  pl-5 pr-5 login_button">Book</a>
-                                    </td>
-                                </tr>
-                            @endif  
+                                        <tr class="border-bottom">
+                                            <td>{{ ucwords($serviceCategory->name) }}</td>
+                                            <td>60 Minutes</td>
+                                            <td> ${{number_format(intval($serviceCategory->t_60)) }} (USD)</td>
+                                            <td><a href="{{ route('appointment_request',encrypt($serviceCategory->id)) }}?time=60"
+                                                    class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-3ac574  pl-5 pr-5 login_button">Book</a>
+                                            </td>
+                                        </tr>
+                                    @endif 
+                            @endforeach
                             
                         </tbody>
                     </table>
@@ -452,26 +480,26 @@
         return `${hours}:${minutes}`;
     }
 
-        function inputSearchServices()
-        {
-            let val = $('.service_inpt').val();
-            $.ajax({
-                url:"{{ route('getQueryServices') }}",
-                type:"get",
-                data:{val:val,service_id:{{ $service->id }},id:{{ $service->specialist_id }}},
-                success:function(data)
-                {
-                $('.services-table-body').html(data);
-                }
-            });
-        }
+        // function inputSearchServices()
+        // {
+        //     let val = $('.service_inpt').val();
+        //     $.ajax({
+        //         url:"{{ route('getQueryServices') }}",
+        //         type:"get",
+        //         data:{val:val,service_id:{{ $service->id }},id:{{ $service->specialist_id }}},
+        //         success:function(data)
+        //         {
+        //         $('.services-table-body').html(data);
+        //         }
+        //     });
+        // }
 
-        $(document).keydown(function(e)
-        {
-            if(e.which === 13){
-            inputSearchServices();
-            }
-        });
+        // $(document).keydown(function(e)
+        // {
+        //     if(e.which === 13){
+        //     inputSearchServices();
+        //     }
+        // });
 
         $(".appointment-btn").on("click", function () {
             
@@ -497,21 +525,13 @@
             {
                 $('.all-day').hide();
                 $('.'+d.toLocaleString('en-us', {weekday: 'long'})).show();
-                // let from = $('input[name='+d.toLocaleString('en-us', {weekday: 'long'})+"_from"+']').val(); 
-                // let to = $('input[name='+d.toLocaleString('en-us', {weekday: 'long'})+"_to"+']').val();
-                // let from_hour = convertTime12to24(from).split(':')[0];
-                // let to_hour = convertTime12to24(to).split(':')[0];
-                // for(let i=parseInt(from_hour); i<=parseInt(to_hour);i++)
-                // {
-                //     console.log(i);
-                // }
                 $('.error-message-div').hide();
             }
             else
             {
                 $('.all-day').hide();
                 $('.error-message-div').show();
-                $('.error-message-text').html("{{ $specialist->username }} is not available on "+ d.toLocaleString('en-us', {weekday: 'long'})+"s.");
+                $('.error-message-text').html("{{ $specialist->username }} is not available at "+ d.toLocaleString('en-us', {weekday: 'long'})+".");
             }
         },1000);
 

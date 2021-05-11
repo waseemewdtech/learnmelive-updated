@@ -68,7 +68,7 @@
                 <div class="dropdown-menu p-0" aria-labelledby="navbarDropdown">
                     @foreach (appointmentCount()['appointments'] as $appointment)
                         
-                    <a class="dropdown-item d-flex row m-0 pt-2" href="{{ url('appointments') }}">
+                    {{-- <a class="dropdown-item d-flex row m-0 pt-2" href="{{ url('appointments') }}">
                         <div class="col-md-2 p-0">
                             <img src="{{ asset(Auth::user()->type=='seller' ? $appointment->user->picture : $appointment->specialist->user->picture ) }}"
                                 alt="" class="img-fluid rounded-circle w-40 h-40" />
@@ -92,7 +92,7 @@
                                 <span class="dropdown-contnt">{{ $appointment->time }}</span>
                             </div>
                         </div>
-                    </a>
+                    </a> --}}
                     @endforeach
                         
                     

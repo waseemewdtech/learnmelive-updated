@@ -44,18 +44,13 @@ class ServiceController extends Controller
      */
     public function store(Request $request)
     {
-        // $service = new Service();
-        // $service->user_id = Auth::user()->id;
-        // $service->category_id = $request->category;
-        // $service->title =  $request->title;
-        // $service->timing =  $request->timing;
-        // $service->rate =  $request->rate;
-        // $service->description = $request->description;
-        // $service->status =  isset($request->status) ? '1' : '0';
-        // $service->save();
-        $serviceCategory = ServiceCategory::where('user_id',Auth::user()->id)->first();
-        $col = 't_'.$request->timing;
-        $serviceCategory->$col = $request->rate;
+        $serviceCategory = new ServiceCategory();
+        $serviceCategory->user_id = Auth::user()->id;
+        $serviceCategory->name = $request->name;
+        $serviceCategory->t_15 = $request->t_15;
+        $serviceCategory->t_30 = $request->t_30;
+        $serviceCategory->t_45 = $request->t_45;
+        $serviceCategory->t_60 = $request->t_60;
         $serviceCategory->save();
         return redirect()->route('services.index')->with('success','Service added Successfuly!');
     }

@@ -21,13 +21,12 @@ class AppointmentController extends Controller
      */
     public function index()
     {
-        if (Auth::user()->user_type == 'specialist') {
-            $appointments = Appointment::where('specialist_id', Auth::user()->specialist->id)->orderBy('created_at','ASC')->get();
-            return view('frontend.settings.appointment', compact( 'appointments'));
+        if (Auth::user()->type == 'seller') {
+            $appointments = Appointment::where('specialist_id', Auth::user()->id)->orderBy('created_at','ASC')->get();
         } else {
             $appointments = Appointment::where('user_id', Auth::user()->id)->orderBy('created_at', 'ASC')->get();
-            return view('frontend.settings.appointment', compact('appointments'));
         }
+        return view('frontend.settings.appointment', compact('appointments'));
         
     }
 
@@ -70,8 +69,10 @@ class AppointmentController extends Controller
 
     public function storeAppointment(Request $request)
     {
-        $date = getTimeZoneDate(Auth::user()->time_zone,config('app.timezone'),$request->date." ".$request->time);
-        $time = getTimeZoneTime(Auth::user()->time_zone,config('app.timezone'),$request->date." ".$request->time);
+        date_default_timezone_set(config('app.timezone'));
+        $timestamp = strtotime($request->date." ".$request->time)*1000;
+        $date = getTimeZoneDate(Auth::user()->timezone,config('app.timezone'),$request->date." ".$request->time);
+        $time = getTimeZoneTime(Auth::user()->timezone,config('app.timezone'),$request->date." ".$request->time);
         if(Appointment::where('date',$date)->where('time',$time)->first() !=null)
         {
             return back()->with('error',$request->time.' on '.$request->date.' has been already booked!');
@@ -83,6 +84,8 @@ class AppointmentController extends Controller
         $appointment->date = $date;
         $appointment->rate = $request->rate;
         $appointment->time = $time;
+        $appointment->service_time = $request->service_time;
+        $appointment->timestamp = $timestamp;
         $appointment->save();
         return back()->with('success','Appointment Created Successfuly!');
 
@@ -119,6 +122,7 @@ class AppointmentController extends Controller
      */
     public function update(Request $request, $id)
     {
+        // return $request->status;
         $appointment = Appointment::findOrFail($id);
         if($request->status == '1'){
             $appointment->status = $request->status;
