@@ -101,7 +101,7 @@
                                     @endif 
 
                                     @if ($appointment->status != "Cancelled") 
-                                        @if (Auth::user()->user_type=='client' && $appointment->payment_status != "Paid" )
+                                        @if (Auth::user()->type=='buyer' && $appointment->payment_status != "Paid" )
                                             @if ($appointment->status == 'Pending')
                                                 <div class="pt-3">
                                                     <button class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-bbbbbb border-0 buttonBoxShadow pt-2 pb-2 robotoRegular pl-4 pr-4">Pending Specialist Approval</button>

@@ -241,7 +241,7 @@ a:focus{
             </div>
         </div>
     </div>
-    @if(Auth::user()->status=='active')
+    @if(Auth::user()->approve=='1')
         <div class="row mt-3 pl-5 ">
             <div class="col-md-12 p-0">
                 <div class="row">
@@ -299,7 +299,8 @@ a:focus{
                     <div class="mt-3 border w-100"></div>
                     @foreach ($service_requests as $service)
                         @php 
-                            $check_bid = App\Models\Bid::where('service_request_id',$service->id)->where('specialist_id',Auth::user()->specialist->id)->first();
+                            $check_bid = App\Models\Bid::where('service_request_id',$service->id)->where('specialist_id',Auth::user()->id)->first();
+
                         @endphp
                     
                         @if ($check_bid ==null)
@@ -368,7 +369,7 @@ a:focus{
                     <div class="mt-3 border w-100"></div>
                     @foreach ($service_requests as $service)
                         @php 
-                            $check_bid = App\Models\Bid::where('service_request_id',$service->id)->where('specialist_id',Auth::user()->specialist->id)->first();
+                            $check_bid = App\Models\Bid::where('service_request_id',$service->id)->where('specialist_id',Auth::user()->id)->first();
                         @endphp
                         @if ($check_bid !=null)
                             <a href="javascript:void(0);" class=" " title="Click To bid this request"   tabindex="0" data-toggle="tooltip" title="Click To bid this request">
@@ -462,7 +463,7 @@ a:focus{
       </div>
       <form action="{{ route('bids.store') }}" method="post" enctype="multipart/form-data">
         @csrf
-        <input type="hidden" name="specialist_id" value="{{ Auth::user()->specialist->id }}"> 
+        <input type="hidden" name="specialist_id" value="{{ Auth::user()->id }}"> 
       <div class="modal-body">
         <div class="row">
             <div class="col-md-6 service_request_detail d-flex"></div>

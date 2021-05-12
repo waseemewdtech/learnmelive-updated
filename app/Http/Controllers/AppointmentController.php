@@ -12,6 +12,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Rating;
 use App\User;
+use App\Booking;
+
 class AppointmentController extends Controller
 {
     /**
@@ -125,6 +127,21 @@ class AppointmentController extends Controller
         // return $request->status;
         $appointment = Appointment::findOrFail($id);
         if($request->status == '1'){
+            $booking = new Booking();
+            $booking->buyer_id =$appointment->user->id; 
+            $booking->seller_id =$appointment->specialist->id;
+            $booking->buyer_name =$appointment->user->username; 
+            $booking->seller_name =$appointment->specialist->username;
+            $booking->buyer_picture =$appointment->user->picture!=''?$appointment->user->picture:url('uploads/user/default.jpg'); 
+            $booking->seller_picture =$appointment->specialist->picture!=''?$appointment->specialist->picture:url('uploads/user/default.jpg'); 
+            $booking->service_name = $appointment->service->name;
+            $booking->service_time = $appointment->service_time;
+            $booking->service_date = $appointment->timestamp;
+            $booking->service_cost = $appointment->rate;
+            $booking->project_type = 'appointments';
+            $booking->project_id = $appointment->id;
+            $booking->possible = 0;
+            $booking->save();
             $appointment->status = $request->status;
         }
         if($request->status == '2'){
@@ -135,6 +152,7 @@ class AppointmentController extends Controller
             $appointment->status = $request->status;
         }
         $appointment->save();
+        
         return back()->with('success', 'Appointment updated Successfuly!');
     }
 

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Appointment;
 use App\Models\Bid;
-use App\Specialist;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Session;
@@ -19,7 +19,7 @@ class StripePaymentController extends Controller
      */
     public function stripe(Request $request)
     {
-        $specialist = Specialist::findOrFail($request->specialist_id);
+        $specialist = User::findOrFail($request->specialist_id);
         $amount = $request->amount;
         $appointment_id = $request->appointment;
         $payment_for = $request->payment_for;

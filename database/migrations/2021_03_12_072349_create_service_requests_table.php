@@ -23,6 +23,7 @@ class CreateServiceRequestsTable extends Migration
             $table->string('attachment')->nullable();
             $table->string('budget');
             $table->longText('description')->nullable();
+            $table->enum('status',['1','0'])->default(0);
             $table->timestamps();
         });
     }
