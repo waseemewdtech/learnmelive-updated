@@ -19,6 +19,11 @@
         background-color: #3ac574 !important;
     }
 
+    .nav-tabs .nav-link.active {
+        background-color: #3ac574 !important;
+        color: #fff!important;
+    }
+
     .px-50 {
         padding-left: 50px !important;
         padding-right: 50px !important;
@@ -31,83 +36,214 @@
 
 <p class="border-bottom pl-3 f-21 cl-616161">Appointments</p>
 
-<div class="table-responsive ServiceTableData px-3" id="ServiceTableData">
-    <table id="example2" class="table example1" style="width: 100%;">
-        <thead class="d-none">
-            <tr class="text-uppercase">
-                <th scope="col">#</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($appointments as $key => $appointment) 
-            @php $tz = Auth::user()->type=='seller' ? $appointment->specialist->timezone : $appointment->user->timezone @endphp
-            <tr class="border-0">
-                <td class=" border-0">
-                    {{-- <section class="p-100"> --}}
-                    <section>
-                        <div class="row pt-3 pb-3  box_shadow1 ml-0 mr-0 borderRadius-10px justify-content-around">
-                            <div class="text-center">
-                                <p class="robotoRegular cl-515151 f-13 m-0">
-                                    {{ date('F', strtotime(getTimeZoneDate(config('app.timezone'),$tz, $appointment->date.' '.$appointment->time))) }}
-                                </p>
-                                <p class="f-45 m-0 cl-515151 robotoRegular">
-                                    {{ date('d', strtotime(getTimeZoneDate(config('app.timezone'),$tz, $appointment->date.' '.$appointment->time))) }}
-                                </p>
-                                <p class="f-12 robotoRegular m-0">
-                                    {{ date('Y', strtotime(getTimeZoneDate(config('app.timezone'),$tz, $appointment->date.' '.$appointment->time))) }}
-                                </p>
-                                <p class="f-8 robotoRegular m-0">
-                                    {{ getTimeZoneTime(config('app.timezone'),$tz,$appointment->date.' '.$appointment->time) }}
-                                </p>
-                            </div>
-                            <div class="height"></div>
+<ul class="nav nav-tabs">
 
-                            <!-- 2 -->
-                            <div class="col-md-5 col-lg-5 p-0 d-flex justify-content-center align-items-start flex-column">
-                                <p>{{ Auth::user()->type=='seller' ? $appointment->user->username : $appointment->specialist->username}}</p>
-                                <div class="d-flex">
-                                    <div class="f-18 d-flex align-items-center cl-000000 robotoRegular">
-                                        {{ $appointment->service->name }}
-                                    </div>
-                                    <div class="f-24 pl-2 cl-616161 robotoRegular">${{ $appointment->rate }}</div>
-                                </div>
-                                <div class="robotoRegular cl-616161">
-                                    {{ ucfirst($appointment->service_time)  }} Minutes
-                                </div>
-                                {{--
-                                <div class="f-14 cl-9c9c9c pt-1">6656 us 301, Riverview, 33578</div>
-                                --}}
-                            </div>
-                            <!-- end -->
-                            <!-- 3 -->
-                            <div class="text-center d-flex justify-content-center flex-column align-items-center">
-                                @if ($appointment->status != "Completed") 
-                                    @if (Auth::user()->type=='seller')
-                                        @if ($appointment->status == "Approved" && $appointment->payment_status != "Paid")
-                                            <div class="pt-3"><button class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-bbbbbb border-0 buttonBoxShadow pt-2 pb-2 robotoRegular pl-4 pr-4">Pending Client Payment</button></div>
-                                        @else
-                                            <div class="pt-3">
-                                                <form action="{{ route('appointments.update',$appointment->id) }}" method="post">
-                                                    @csrf @method('put')
+    <li class="nav-item">
+      <a class="nav-link active cl-000000" data-toggle="tab" href="#pending">Pending</a>
+    </li>
+
+    <li class="nav-item">
+      <a class="nav-link cl-000000" data-toggle="tab" href="#approved">Approved</a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link cl-000000" data-toggle="tab" href="#cancelled">Cancelled</a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link cl-000000" data-toggle="tab" href="#completed">Completed</a>
+    </li>
+  </ul>
+  
+  <!-- Tab panes -->
+  <div class="tab-content">
+    <div class="tab-pane active container" id="pending">
+        <div class="table-responsive ServiceTableData px-3 mt-1" id="ServiceTableData">
+            <table id="example2" class="table example1" style="width: 100%;">
+                <thead class="d-none">
+                    <tr class="text-uppercase">
+                        <th scope="col">#</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($pending as $key => $appointment) 
+                        @php $tz = Auth::user()->type=='seller' ? $appointment->specialist->timezone : $appointment->user->timezone @endphp
+                        <tr class="border-0">
+                            <td class=" border-0">
+                                {{-- <section class="p-100"> --}}
+                                <section>
+                                    <div class="row pt-3 pb-3  box_shadow1 ml-0 mr-0 borderRadius-10px justify-content-around">
+                                        <div class="text-center">
+                                            <p class="robotoRegular cl-515151 f-13 m-0">
+                                                {{ date('F', strtotime(getTimeZoneDate(config('app.timezone'),$tz, $appointment->date.' '.$appointment->time))) }}
+                                            </p>
+                                            <p class="f-45 m-0 cl-515151 robotoRegular">
+                                                {{ date('d', strtotime(getTimeZoneDate(config('app.timezone'),$tz, $appointment->date.' '.$appointment->time))) }}
+                                            </p>
+                                            <p class="f-12 robotoRegular m-0">
+                                                {{ date('Y', strtotime(getTimeZoneDate(config('app.timezone'),$tz, $appointment->date.' '.$appointment->time))) }}
+                                            </p>
+                                            <p class="f-8 robotoRegular m-0">
+                                                {{ getTimeZoneTime(config('app.timezone'),$tz,$appointment->date.' '.$appointment->time) }}
+                                            </p>
+                                        </div>
+                                        <div class="height"></div>
         
-                                                    <input type="hidden" name="status" value="{{ ($appointment->status == 'Cancelled')? '1': (($appointment->status == 'Pending')? '1':'3') }}" />
-                                                    <button type="submit" class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-3AC574 border-0 buttonBoxShadow pt-2 pb-2 robotoRegular pl-4 pr-4">
-                                                        
-                                                        {{ $appointment->status == 'Cancelled'? 'Accept': ($appointment->status == 'Pending'? 'Accept':'Completed') }}
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        @endif
-                                    @endif 
-
-                                    @if ($appointment->status != "Cancelled") 
-                                        @if (Auth::user()->type=='buyer' && $appointment->payment_status != "Paid" )
-                                            @if ($appointment->status == 'Pending')
-                                                <div class="pt-3">
-                                                    <button class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-bbbbbb border-0 buttonBoxShadow pt-2 pb-2 robotoRegular pl-4 pr-4">Pending Specialist Approval</button>
-                                                
+                                        <!-- 2 -->
+                                        <div class="col-md-5 col-lg-5 p-0 d-flex justify-content-center align-items-start flex-column">
+                                            <p>{{ Auth::user()->type=='seller' ? $appointment->user->username : $appointment->specialist->username}}</p>
+                                            <div class="d-flex">
+                                                <div class="f-18 d-flex align-items-center cl-000000 robotoRegular">
+                                                    {{ $appointment->service->name }}
                                                 </div>
-                                            @else
+                                                <div class="f-24 pl-2 cl-616161 robotoRegular">${{ $appointment->rate }}</div>
+                                            </div>
+                                            <div class="robotoRegular cl-616161">
+                                                {{ ucfirst($appointment->service_time)  }} Minutes
+                                            </div>
+                                            {{--
+                                            <div class="f-14 cl-9c9c9c pt-1">6656 us 301, Riverview, 33578</div>
+                                            --}}
+                                        </div>
+                                        <!-- end -->
+                                        <!-- 3 -->
+                                        <div class="text-center d-flex justify-content-center flex-column align-items-center">
+                                            @if ($appointment->status != "Completed") 
+                                                @if (Auth::user()->type=='seller')
+
+                                                    <div class="pt-3">
+                                                        <form action="{{ route('appointments.update',$appointment->id) }}" method="post">
+                                                            @csrf @method('put')
+                
+                                                            <input type="hidden" name="status" value="1" />
+                                                            <button type="submit" class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-3AC574 border-0 buttonBoxShadow pt-2 pb-2 robotoRegular pl-4 pr-4">
+                                                                
+                                                                {{ $appointment->status == 'Cancelled'? 'Accept': ($appointment->status == 'Pending'? 'Accept':'Completed') }}
+                                                            </button>
+                                                        </form>
+                                                    </div>
+
+                                                @endif 
+        
+                                                @if (Auth::user()->type=='buyer' && $appointment->payment_status != "Paid" )
+                                                    @if ($appointment->status == 'Pending')
+                                                        <div class="pt-3">
+                                                            <button class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-bbbbbb border-0 buttonBoxShadow pt-2 pb-2 robotoRegular pl-4 pr-4">Pending Specialist Approval</button>
+                                                        
+                                                        </div>
+                                                    @else
+                                                        <div class="pt-3">
+                                                            <p class="f-12 robotoRegular m-0">Specialist Accepted <br> pay now to confirm Appointment</p>
+                                                            <button
+                                                                class="btn payment_btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-3AC574 border-0 buttonBoxShadow pt-2 pb-2 robotoRegular pl-4 pr-4"
+                                                                data-toggle="modal"
+                                                                data-target="#payment_modal"
+                                                                data-id="{{ $appointment->id }}"
+                                                                data-specialist="{{ $appointment->specialist_id }}"
+                                                                data-amount="{{ $appointment->rate - $appointment->payment_amount }}"
+                                                                data-payment_for="appointment" >
+                                                                Payment
+                                                            </button>
+                                                        </div>
+                                                    @endif
+
+                                                @endif
+                                                <div class="pt-3">
+                                                    <form action="{{ route('appointments.update',$appointment->id) }}" method="post">
+                                                        @csrf @method('put')
+                                                        <input type="hidden" name="status" value="2" />
+                                                        <button type="submit" class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-bbbbbb border-0 buttonBoxShadow pt-2 pb-2 robotoRegular pl-4 pr-4">Decline</button>
+                                                    </form>
+                                                </div>
+                                            @endif
+                                        </div>
+                                        <!-- end -->
+                                    </div>
+                                </section>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="tab-pane container" id="approved">
+        <div class="table-responsive ServiceTableData px-3 mt-1" id="ServiceTableData">
+            <table id="example2" class="table example1" style="width: 100%;">
+                <thead class="d-none">
+                    <tr class="text-uppercase">
+                        <th scope="col">#</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($approved as $key => $appointment) 
+                        @php $tz = Auth::user()->type=='seller' ? $appointment->specialist->timezone : $appointment->user->timezone @endphp
+                        <tr class="border-0">
+                            <td class=" border-0">
+                                {{-- <section class="p-100"> --}}
+                                <section>
+                                    <div class="row pt-3 pb-3  box_shadow1 ml-0 mr-0 borderRadius-10px justify-content-around">
+                                        <div class="text-center">
+                                            <p class="robotoRegular cl-515151 f-13 m-0">
+                                                {{ date('F', strtotime(getTimeZoneDate(config('app.timezone'),$tz, $appointment->date.' '.$appointment->time))) }}
+                                            </p>
+                                            <p class="f-45 m-0 cl-515151 robotoRegular">
+                                                {{ date('d', strtotime(getTimeZoneDate(config('app.timezone'),$tz, $appointment->date.' '.$appointment->time))) }}
+                                            </p>
+                                            <p class="f-12 robotoRegular m-0">
+                                                {{ date('Y', strtotime(getTimeZoneDate(config('app.timezone'),$tz, $appointment->date.' '.$appointment->time))) }}
+                                            </p>
+                                            <p class="f-8 robotoRegular m-0">
+                                                {{ getTimeZoneTime(config('app.timezone'),$tz,$appointment->date.' '.$appointment->time) }}
+                                            </p>
+                                        </div>
+                                        <div class="height"></div>
+        
+                                        <!-- 2 -->
+                                        <div class="col-md-5 col-lg-5 p-0 d-flex justify-content-center align-items-start flex-column">
+                                            <p>{{ Auth::user()->type=='seller' ? $appointment->user->username : $appointment->specialist->username}}</p>
+                                            <div class="d-flex">
+                                                <div class="f-18 d-flex align-items-center cl-000000 robotoRegular">
+                                                    {{ $appointment->service->name }}
+                                                </div>
+                                                <div class="f-24 pl-2 cl-616161 robotoRegular">${{ $appointment->rate }}</div>
+                                            </div>
+                                            <div class="robotoRegular cl-616161">
+                                                {{ ucfirst($appointment->service_time)  }} Minutes
+                                            </div>
+                                            {{--
+                                            <div class="f-14 cl-9c9c9c pt-1">6656 us 301, Riverview, 33578</div>
+                                            --}}
+                                        </div>
+                                        <!-- end -->
+                                        <!-- 3 -->
+                                        <div class="text-center d-flex justify-content-center flex-column align-items-center">
+                                            @if (Auth::user()->type=='seller')
+                                                @if ($appointment->payment_status != "Paid")
+                                                    <div class="pt-3"><button class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-bbbbbb border-0 buttonBoxShadow pt-2 pb-2 robotoRegular pl-4 pr-4">Pending Client Payment</button></div>
+                                                @else
+                                                    <div class="pt-3">
+                                                        <form action="{{ route('appointments.update',$appointment->id) }}" method="post">
+                                                            @csrf @method('put')
+                
+                                                            <input type="hidden" name="status" value="2" />
+                                                            <button type="submit" class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-3AC574 border-0 buttonBoxShadow pt-2 pb-2 robotoRegular pl-4 pr-4">Decline</button>
+                                                        </form>
+                                                    </div>
+
+                                                    <div class="pt-3">
+                                                        <form action="{{ route('appointments.update',$appointment->id) }}" method="post">
+                                                            @csrf @method('put')
+                
+                                                            <input type="hidden" name="status" value="3" />
+                                                            <button type="submit" class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-3AC574 border-0 buttonBoxShadow pt-2 pb-2 robotoRegular pl-4 pr-4">Complete</button>
+                                                        </form>
+                                                    </div>
+                                                @endif
+                                            @endif 
+
+                                            @if (Auth::user()->type=='buyer' && $appointment->payment_status != "Paid" )
                                                 <div class="pt-3">
                                                     <p class="f-12 robotoRegular m-0">Specialist Accepted <br> pay now to confirm Appointment</p>
                                                     <button
@@ -121,38 +257,193 @@
                                                         Payment
                                                     </button>
                                                 </div>
+                                            @elseif(Auth::user()->type=='buyer' && $appointment->payment_status == "Paid" )
+                                                
+                                                <div class="pt-3">
+                                                    <form action="{{ route('appointments.update',$appointment->id) }}" method="post">
+                                                        @csrf @method('put')
+                                                        <input type="hidden" name="status" value="3" />
+                                                        <button type="submit" class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-bbbbbb border-0 buttonBoxShadow pt-2 pb-2 robotoRegular pl-4 pr-4">Complete</button>
+                                                    </form>
+                                                </div>
+                                                
                                             @endif
 
-                                        @endif
-                                        <div class="pt-3">
-                                            <form action="{{ route('appointments.update',$appointment->id) }}" method="post">
-                                                @csrf @method('put')
-                                                <input type="hidden" name="status" value="2" />
-                                                <button type="submit" class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-bbbbbb border-0 buttonBoxShadow pt-2 pb-2 robotoRegular pl-4 pr-4">Decline</button>
-                                            </form>
+                                            <div class="pt-3">
+                                                <form action="{{ route('appointments.update',$appointment->id) }}" method="post">
+                                                    @csrf @method('put')
+                                                    <input type="hidden" name="status" value="2" />
+                                                    <button type="submit" class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-bbbbbb border-0 buttonBoxShadow pt-2 pb-2 robotoRegular pl-4 pr-4">Decline</button>
+                                                </form>
+                                            </div>
+        
+                                            @if ($appointment->payment_status == "Paid")
+                                                <div class="pt-3">
+                                                    @if(App\ClientSpecialistDispute::where('project_id',$appointment->id)->first() ==null)
+                                                        <a href="{{ route('dispute-araise',['project'=>encrypt($appointment->id),'id'=>Auth::user()->user_type=="client"? encrypt($appointment->specialist->user->id):encrypt($appointment->user->id)]) }}?project_type=appointments" class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-bbbbbb border-0 buttonBoxShadow pt-2 pb-2 robotoRegular pl-4 pr-4">Raise Dispute</a>
+                                                    @else
+                                                        <a href="{{ route('disputes.show',encrypt(App\ClientSpecialistDispute::where('project_id',$appointment->id)->first()->id)) }}" target="_blank" class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-bbbbbb border-0 buttonBoxShadow pt-2 pb-2 robotoRegular pl-4 pr-4">View Dispute</a>    
+                                                    @endif
+                                                </div>
+                                            @endif
                                         </div>
-                                    @endif 
-                                @endif
-
-                                @if ($appointment->status != "Cancelled" && $appointment->payment_status == "Paid")
-                                    <div class="pt-3">
-                                        @if(App\ClientSpecialistDispute::where('project_id',$appointment->id)->first() ==null)
-                                            <a href="{{ route('dispute-araise',['project'=>encrypt($appointment->id),'id'=>Auth::user()->user_type=="client"? encrypt($appointment->specialist->user->id):encrypt($appointment->user->id)]) }}?project_type=appointments" class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-bbbbbb border-0 buttonBoxShadow pt-2 pb-2 robotoRegular pl-4 pr-4">Raise Dispute</a>
-                                        @else
-                                            <a href="{{ route('disputes.show',encrypt(App\ClientSpecialistDispute::where('project_id',$appointment->id)->first()->id)) }}" target="_blank" class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-bbbbbb border-0 buttonBoxShadow pt-2 pb-2 robotoRegular pl-4 pr-4">View Dispute</a>    
-                                        @endif
+                                        <!-- end -->
                                     </div>
-                                @endif
-                            </div>
-                            <!-- end -->
-                        </div>
-                    </section>
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
-</div>
+                                </section>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="tab-pane container" id="cancelled">
+        <div class="table-responsive ServiceTableData px-3 mt-1" id="ServiceTableData">
+            <table id="example2" class="table example1" style="width: 100%;">
+                <thead class="d-none">
+                    <tr class="text-uppercase">
+                        <th scope="col">#</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($cancelled as $key => $appointment) 
+                        @php $tz = Auth::user()->type=='seller' ? $appointment->specialist->timezone : $appointment->user->timezone @endphp
+                        <tr class="border-0">
+                            <td class=" border-0">
+                                {{-- <section class="p-100"> --}}
+                                <section>
+                                    <div class="row pt-3 pb-3  box_shadow1 ml-0 mr-0 borderRadius-10px justify-content-around">
+                                        <div class="text-center">
+                                            <p class="robotoRegular cl-515151 f-13 m-0">
+                                                {{ date('F', strtotime(getTimeZoneDate(config('app.timezone'),$tz, $appointment->date.' '.$appointment->time))) }}
+                                            </p>
+                                            <p class="f-45 m-0 cl-515151 robotoRegular">
+                                                {{ date('d', strtotime(getTimeZoneDate(config('app.timezone'),$tz, $appointment->date.' '.$appointment->time))) }}
+                                            </p>
+                                            <p class="f-12 robotoRegular m-0">
+                                                {{ date('Y', strtotime(getTimeZoneDate(config('app.timezone'),$tz, $appointment->date.' '.$appointment->time))) }}
+                                            </p>
+                                            <p class="f-8 robotoRegular m-0">
+                                                {{ getTimeZoneTime(config('app.timezone'),$tz,$appointment->date.' '.$appointment->time) }}
+                                            </p>
+                                        </div>
+                                        <div class="height"></div>
+                                        <!-- 2 -->
+                                        <div class="col-md-5 col-lg-5 p-0 d-flex justify-content-center align-items-start flex-column">
+                                            <p>{{ Auth::user()->type=='seller' ? $appointment->user->username : $appointment->specialist->username}}</p>
+                                            <div class="d-flex">
+                                                <div class="f-18 d-flex align-items-center cl-000000 robotoRegular">
+                                                    {{ $appointment->service->name }}
+                                                </div>
+                                                <div class="f-24 pl-2 cl-616161 robotoRegular">${{ $appointment->rate }}</div>
+                                            </div>
+                                            <div class="robotoRegular cl-616161">
+                                                {{ ucfirst($appointment->service_time)  }} Minutes
+                                            </div>
+                                            {{--
+                                            <div class="f-14 cl-9c9c9c pt-1">6656 us 301, Riverview, 33578</div>
+                                            --}}
+                                        </div>
+                                        <!-- end -->
+                                        <!-- 3 -->
+                                        <div class="text-center d-flex justify-content-center flex-column align-items-center">
+                                            <div class="pt-3">
+                                                <form action="{{ route('appointments.update',$appointment->id) }}" method="post">
+                                                    @csrf @method('put')
+                                                    <input type="hidden" name="status" value="1" />
+                                                    <button type="submit" class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-3AC574 border-0 buttonBoxShadow pt-2 pb-2 robotoRegular pl-4 pr-4">Accept</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        <!-- end -->
+                                    </div>
+                                </section>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="tab-pane container" id="completed">
+        <div class="table-responsive ServiceTableData px-3 mt-1" id="ServiceTableData">
+            <table id="example2" class="table example1" style="width: 100%;">
+                <thead class="d-none">
+                    <tr class="text-uppercase">
+                        <th scope="col">#</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($completed as $key => $appointment) 
+                        @php $tz = Auth::user()->type=='seller' ? $appointment->specialist->timezone : $appointment->user->timezone @endphp
+                        <tr class="border-0">
+                            <td class=" border-0">
+                                {{-- <section class="p-100"> --}}
+                                <section>
+                                    <div class="row pt-3 pb-3  box_shadow1 ml-0 mr-0 borderRadius-10px justify-content-around">
+                                        <div class="text-center">
+                                            <p class="robotoRegular cl-515151 f-13 m-0">
+                                                {{ date('F', strtotime(getTimeZoneDate(config('app.timezone'),$tz, $appointment->date.' '.$appointment->time))) }}
+                                            </p>
+                                            <p class="f-45 m-0 cl-515151 robotoRegular">
+                                                {{ date('d', strtotime(getTimeZoneDate(config('app.timezone'),$tz, $appointment->date.' '.$appointment->time))) }}
+                                            </p>
+                                            <p class="f-12 robotoRegular m-0">
+                                                {{ date('Y', strtotime(getTimeZoneDate(config('app.timezone'),$tz, $appointment->date.' '.$appointment->time))) }}
+                                            </p>
+                                            <p class="f-8 robotoRegular m-0">
+                                                {{ getTimeZoneTime(config('app.timezone'),$tz,$appointment->date.' '.$appointment->time) }}
+                                            </p>
+                                        </div>
+                                        <div class="height"></div>
+        
+                                        <!-- 2 -->
+                                        <div class="col-md-5 col-lg-5 p-0 d-flex justify-content-center align-items-start flex-column">
+                                            <p>{{ Auth::user()->type=='seller' ? $appointment->user->username : $appointment->specialist->username}}</p>
+                                            <div class="d-flex">
+                                                <div class="f-18 d-flex align-items-center cl-000000 robotoRegular">
+                                                    {{ $appointment->service->name }}
+                                                </div>
+                                                <div class="f-24 pl-2 cl-616161 robotoRegular">${{ $appointment->rate }}</div>
+                                            </div>
+                                            <div class="robotoRegular cl-616161">
+                                                {{ ucfirst($appointment->service_time)  }} Minutes
+                                            </div>
+                                            {{--
+                                            <div class="f-14 cl-9c9c9c pt-1">6656 us 301, Riverview, 33578</div>
+                                            --}}
+                                        </div>
+                                        <!-- end -->
+                                        <!-- 3 -->
+                                        <div class="text-center d-flex justify-content-center flex-column align-items-center">
+                                            @if ($appointment->payment_status == "Paid")
+                                                <div class="pt-3">
+                                                    @if(App\ClientSpecialistDispute::where('project_id',$appointment->id)->first() ==null)
+                                                        <a href="{{ route('dispute-araise',['project'=>encrypt($appointment->id),'id'=>Auth::user()->user_type=="client"? encrypt($appointment->specialist->user->id):encrypt($appointment->user->id)]) }}?project_type=appointments" class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-bbbbbb border-0 buttonBoxShadow pt-2 pb-2 robotoRegular pl-4 pr-4">Raise Dispute</a>
+                                                    @else
+                                                        <a href="{{ route('disputes.show',encrypt(App\ClientSpecialistDispute::where('project_id',$appointment->id)->first()->id)) }}" target="_blank" class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-bbbbbb border-0 buttonBoxShadow pt-2 pb-2 robotoRegular pl-4 pr-4">View Dispute</a>    
+                                                    @endif
+                                                </div>
+                                            @endif
+                                        </div>
+                                        <!-- end -->
+                                    </div>
+                                </section>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+  </div>
+
+
+
+
 {{-- <div class="table-responsive ServiceTableData px-3" id="ServiceTableData">
     <table id="example2" class="table table-hover example1" style="width: 100%;">
         <thead>

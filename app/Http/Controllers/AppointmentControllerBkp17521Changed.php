@@ -14,7 +14,7 @@ use App\Rating;
 use App\User;
 use App\Booking;
 
-class AppointmentController extends Controller
+class AppointmentControllerBkp17521Changed extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -24,17 +24,11 @@ class AppointmentController extends Controller
     public function index()
     {
         if (Auth::user()->type == 'seller') {
-            $pending = Appointment::where('specialist_id', Auth::user()->id)->orderBy('date', 'ASC')->where('status','0')->get();
-            $approved = Appointment::where('specialist_id', Auth::user()->id)->orderBy('date', 'ASC')->where('status','1')->get();
-            $cancelled = Appointment::where('specialist_id', Auth::user()->id)->orderBy('date', 'ASC')->where('status','2')->get();
-            $completed = Appointment::where('specialist_id', Auth::user()->id)->orderBy('date', 'ASC')->where('status','3')->get();
+            $appointments = Appointment::where('specialist_id', Auth::user()->id)->orderBy('created_at','ASC')->get();
         } else {
-            $pending = Appointment::where('user_id', Auth::user()->id)->orderBy('date', 'ASC')->where('status','0')->get();
-            $approved = Appointment::where('user_id', Auth::user()->id)->orderBy('date', 'ASC')->where('status','1')->get();
-            $cancelled = Appointment::where('user_id', Auth::user()->id)->orderBy('date', 'ASC')->where('status','2')->get();
-            $completed = Appointment::where('user_id', Auth::user()->id)->orderBy('date', 'ASC')->where('status','3')->get();
+            $appointments = Appointment::where('user_id', Auth::user()->id)->orderBy('created_at', 'ASC')->get();
         }
-        return view('frontend.settings.appointment', compact('pending','approved','cancelled','completed'));
+        return view('frontend.settings.appointment', compact('appointments'));
         
     }
 
@@ -46,13 +40,12 @@ class AppointmentController extends Controller
     public function create(Request $request,$id)
     {
         $id =  decrypt($id);
-        $time = $request->time;
         $service = ServiceCategory::findOrFail($id);
         $specialist = User::where('id',$service->user_id)->first();
         $today = Carbon::today();
         $tomorrow = Carbon::tomorrow();
         $appointments = Appointment::where('service_id',$id)->where('status','1')->whereBetween('created_at', [$today, $tomorrow])->get()->pluck('time')->toArray();
-        return view('frontend.appointments',compact('service','specialist','appointments','time'));
+        return view('frontend.appointments',compact('service','specialist','appointments'));
     }
 
     /**
@@ -81,9 +74,9 @@ class AppointmentController extends Controller
         $timestamp = strtotime($request->date." ".$request->time)*1000;
         $date = getTimeZoneDate(Auth::user()->timezone,config('app.timezone'),$request->date." ".$request->time);
         $time = getTimeZoneTime(Auth::user()->timezone,config('app.timezone'),$request->date." ".$request->time);
-        if(Appointment::where('date',$date)->where('time',$time)->where('service_time',$request->service_time)->first() !=null)
+        if(Appointment::where('date',$date)->where('time',$time)->first() !=null)
         {
-            return back()->with('error',$request->time.' on '.$request->date.' and duration '.$request->service_time.' have been already booked!');
+            return back()->with('error',$request->time.' on '.$request->date.' has been already booked!');
         }
         $appointment = new Appointment();
         $appointment->user_id = Auth::user()->id;
