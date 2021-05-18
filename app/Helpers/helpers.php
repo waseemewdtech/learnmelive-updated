@@ -724,12 +724,12 @@
         }
     }
 
-    if(!function_exists('apointments_function')){
+    if(!function_exists('appointmentCount')){
         function appointmentCount()
         {
         if(Auth::check()){
             if (Auth::user()->user_type == 'specialist') {
-                $appointments = Appointment::where('specialist_id', Auth::user()->specialist->id)->where('status','0')->get();
+                $appointments = Appointment::where('specialist_id', Auth::user()->id)->where('status','0')->get();
             } else {
                 $appointments = Appointment::where('user_id', Auth::user()->id)->where('status', '0')->get();
             }

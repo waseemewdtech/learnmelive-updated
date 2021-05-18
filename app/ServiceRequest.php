@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ServiceRequest extends Model
 {
-    public function User()
+    public function user()
     {
         return $this->belongsTo(User::class);
     }

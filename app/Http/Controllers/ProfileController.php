@@ -7,7 +7,7 @@ use App\Client;
 use App\Http\Controllers\Controller;
 use App\Models\Appointment;
 use App\Models\Bid;
-use App\Models\Specialists\Portfolio;
+use App\Portfolio;
 use App\Models\Specialists\Service;
 use App\Specialist;
 use App\User;
@@ -70,7 +70,6 @@ class ProfileController extends Controller
     {
         $profile = User::find(Auth::id());
         $old_avatar = $profile->picture;
-
         $this->validate($request, [
             'avatar' => 'required|image|mimes:jpeg,jpg,png|max:2048',
         ]);
@@ -303,9 +302,10 @@ class ProfileController extends Controller
 
     public function portfolio()
     {
-        $portfolio_images = Portfolio::where('specialist_id',Auth::user()->specialist->id)->get();
+        $portfolio_images = Portfolio::where('user_id',Auth::user()->id)->get();
         return view('frontend.settings.portfolio',compact('portfolio_images'));
     }
+    
     public function portfolioImages(Request $request)
     {
        

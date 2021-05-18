@@ -67,9 +67,10 @@ class User extends Authenticatable
     {
         return $this->hasOne(Admin::class);
     }
-    public function service_request()
+
+    public function serviceRequest()
     {
-        return $this->hasOne(ServiceRequest::class);
+        return $this->hasMany(ServiceRequest::class);
     }
 
     public function appointment()

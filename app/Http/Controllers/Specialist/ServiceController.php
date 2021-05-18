@@ -20,7 +20,7 @@ class ServiceController extends Controller
     public function index()
     {
         
-        $services = Service::where('user_id', Auth::user()->id)->get();
+        $services = ServiceCategory::where('user_id', Auth::user()->id)->get();
         $category = Category::where('title',Auth::user()->serviceCategory->name)->first();
         $categories = Category::all();
         return view('frontend.settings.services',compact('services', 'category','categories'));
@@ -74,14 +74,10 @@ class ServiceController extends Controller
      */
     public function edit($id)
     {
-        $service = Service::findOrFail($id);
+        $service = ServiceCategory::findOrFail($id);
         $categories = Category::all();
-        $subcategories = SubCategory::all();
-        $service_subcategories = json_decode($service->sub_categories);
-        $tags = json_decode($service->tags);
-        
-
-        return view('specialist/services/edit', compact('service', 'categories', 'subcategories', 'service_subcategories','tags'));
+        $category = Category::where('title',$service->name)->first();
+        return view('specialist/services/edit', compact('service', 'categories','category'));
     }
 
     /**

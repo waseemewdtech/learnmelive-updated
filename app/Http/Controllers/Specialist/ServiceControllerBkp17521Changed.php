@@ -10,7 +10,7 @@ use App\ServiceCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class ServiceController extends Controller
+class ServiceControllerBkp17521Changed extends Controller
 {
     /**
      * Display a listing of the resource.
