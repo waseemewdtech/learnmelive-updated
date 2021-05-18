@@ -20,7 +20,7 @@ class StripePaymentController extends Controller
      */
     public function stripe(Request $request)
     {
-        $specialist = User::findOrFail($request->specialist_id);
+        $specialist = Specialist::findOrFail($request->specialist_id);
         $amount = $request->amount;
         $appointment_id = $request->appointment;
         $payment_for = $request->payment_for;
