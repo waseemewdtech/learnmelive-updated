@@ -198,7 +198,11 @@
             </li>
             <script src="{{ asset('assets/frontend/js/video-js/jquery.min.js') }}"></script>
             <script>
+<<<<<<< HEAD
                 $(document).ready(function(){
+=======
+            $(document).ready(function(){
+>>>>>>> cfb2e793e1bd169983264b0b2cbdaabf434972a9
                     setInterval(function(){ 
                         var username = $('.video-chat').data('caller');
                         $.ajax({
@@ -219,8 +223,14 @@
                             }
                         })
                     }, 5000);
+<<<<<<< HEAD
                 });
             </script>
+=======
+                })
+            </script>
+           
+>>>>>>> cfb2e793e1bd169983264b0b2cbdaabf434972a9
             @endguest
         </ul>
     </div>
