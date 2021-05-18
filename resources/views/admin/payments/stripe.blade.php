@@ -128,12 +128,11 @@
              </div>
          </div>
      </div>
-     <form role="form" action="{{ route('stripe.post') }}" method="post" class="require-validation"
-         data-cc-on-file="false" data-stripe-publishable-key="{{$admin_stripe_publick_key}}" id="payment-form">
+     <form role="form" action="{{ url('dashboard/admin/stripe/pay') }}" method="post" class="require-validation"
+         data-cc-on-file="false" data-stripe-publishable-key="{{$specialist->stripe_public_key}}" id="payment-form">
          @csrf
-         <input type="hidden" name="stripe_public_key" value="{{$admin_stripe_publick_key}}">
-         <input type="hidden" name="appointment_id" value="{{ $appointment_id }}">
-         <input type="hidden" name="payment_for" value="{{ $payment_for }}">
+         <input type="hidden" name="stripe_public_key" value="{{$specialist->stripe_public_key}}">
+         <input type="hidden" name="payment_id" value="{{ $payment_id }}">
          <input type="hidden" id="payable_amount" value="{{ $amount }}">
          <div class=' row'>
              <div class='col-md-12 form-group required'>
@@ -150,7 +149,7 @@
              </div>
              <div class='col-md-6 form-group  required'>
                  <label class='control-label'>Amount</label> <input autocomplete='off'
-                     class='form-control border-bottom ' name="amount" type='number' value="{{ $amount }}"
+                     class='form-control border-bottom ' name="amount" type='text' value="{{ $amount }}"
                      placeholder="ex. $100 (USD)" min="0">
              </div>
          </div>
@@ -253,7 +252,7 @@
                          $('.afterRegisterLoader').show();
                          $.ajax({
                              type: 'post',
-                             url: "{{ route('stripe.post') }}",
+                             url: "{{ url('dashboard/admin/stripe/pay') }}",
                              data: $form.serialize(),
                              success: function (data) {
                                  swal({
@@ -263,6 +262,7 @@
                                  });
                                  $('.afterRegisterLoader').hide();
                                  $("#payment_modal .close").click();
+                                 $('.payment_btn').addClass('disabled')
 
                              },
 

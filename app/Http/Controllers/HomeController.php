@@ -6,7 +6,7 @@ use App\Models\Specialists\Service;
 use App\Specialist;
 use App\User;
 use Illuminate\Http\Request;
-use App\ServiceCategory;
+
 class HomeController extends Controller
 {
 
@@ -17,7 +17,7 @@ class HomeController extends Controller
      */
     public function category_specialists($id)
     {
-        $specialists = ServiceCategory::where('category_id',$id)->get();
+        $specialists = Specialist::where('category_id',$id)->get();
         return view('frontend.category_specialist',compact('specialists'));
     }
 

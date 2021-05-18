@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Appointment;
 use App\Models\Bid;
+use App\Payment;
+use App\Specialist;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,11 +21,13 @@ class StripePaymentController extends Controller
      */
     public function stripe(Request $request)
     {
-        $specialist = User::findOrFail($request->specialist_id);
+        $specialist = Specialist::findOrFail($request->specialist_id);
         $amount = $request->amount;
         $appointment_id = $request->appointment;
         $payment_for = $request->payment_for;
-        return view('stripe',compact('specialist', 'amount', 'appointment_id', 'payment_for'));
+        $admin = User::where('user_type','admin')->first();
+        $admin_stripe_publick_key = $admin->stripe_public_key;
+        return view('stripe',compact('specialist', 'amount', 'appointment_id', 'payment_for','admin_stripe_publick_key'));
     }
 
     /**
@@ -33,14 +37,17 @@ class StripePaymentController extends Controller
      */
     public function stripePost(Request $request)
     {
-        $specialist = Specialist::where('stripe_public_key',$request->stripe_public_key)->first();
-        Stripe\Stripe::setApiKey($specialist->stripe_secrete_key);
+        $admin = User::where('user_type','admin')->first();
+        Stripe\Stripe::setApiKey($admin->stripe_secret_key);
         Stripe\Charge::create([
             "amount" => 100 * $request->amount,
             "currency" => "usd",
             "source" => $request->stripeToken,
             "description" => "Payment from ". Auth::user()->name,
         ]);
+        $payment = new Payment();
+        $payment->user_id = Auth::user()->id;
+        $payment->received_amount = $request->amount;
         if($request->payment_for == 'appointment'){
             $appointment = Appointment::findOrFail($request->appointment_id);
             $appointment->payment_amount = $appointment->payment_amount + $request->amount;
@@ -51,6 +58,8 @@ class StripePaymentController extends Controller
 
             }
             $appointment->save();
+            $payment->specialist_id = $appointment->specialist_id;
+            $payment->appointment_id = $appointment->id;
         }
 
         if($request->payment_for == 'bid'){
@@ -62,7 +71,10 @@ class StripePaymentController extends Controller
                 $bid->payment_status = '2';
             }
             $bid->save();
+            $payment->specialist_id = $bid->specialist_id;
+            $payment->bid_id = $bid->id;
         }
+        $payment->save();
 
 
         // Session::flash('success', 'Payment successful!');

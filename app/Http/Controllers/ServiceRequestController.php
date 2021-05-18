@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ServiceRequestActiveMail;
 use App\Mail\ServiceRequestInActiveMail;
-use Validator;
 
 class ServiceRequestController extends Controller
 {
@@ -58,31 +57,29 @@ class ServiceRequestController extends Controller
      */
     public function store(Request $request)
     {
-        $validations = Validator::make($request->all(), [
+
+        $this->validate($request, [
             'title' => 'required',
             'category' => 'required',
+            'sub_categories' => 'required',
             'budget' => 'required',
             'description' => 'required',
         ]);
-
-        if($validations->fails())
-        {
-            return back()->withErrors($validations)->withInput();
-        }
-
         $service_request = new ServiceRequest();
         $service_request->title = $request->title;
         $service_request->category_id = $request->category;
         $service_request->user_id = Auth::user()->id;
         $service_request->description = $request->description;
         $service_request->budget = $request->budget;
-        if($request->hasFile('tags')){
-            $file = $request->tags;
+        $service_request->subcategories = json_encode($request->sub_categories);
+        if($file= $request->file('tags')){
             $file_original_name = $file->getClientOriginalName();
-            $image_changed_name = time() . '.' .$file->extension();
+            $image_changed_name = time() . '_' . str_replace('', '-', $file_original_name);
             $file->move('public/uploads/files/', $image_changed_name);
-            $service_request->attachment = url('uploads/files').'/'. $image_changed_name;
+            $service_request->tags = 'uploads/files/' . $image_changed_name;
         }
+        // $tags = explode(',', $request->tags);
+        // $service_request->tags = json_encode($tags);
         $service_request->save();
         return back()->with('success','Request has been generated!');
     }

@@ -17,7 +17,7 @@ class UserStatus
     {
         if(auth::check())
         {
-            if(auth::user()->approve=='0')
+            if(auth::user()->status=='inactive')
             {
                 auth::logout();
                 $message = 'Your account is not approved please contact with administrator';

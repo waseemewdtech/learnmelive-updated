@@ -233,14 +233,14 @@
 
                                 <div class="bg-3AC574 ml-2 mr-2  active rounded border radio_Selection">
                                     <input type="radio" class="btn-check d-none" name="user_type" id="specialist"
-                                        autocomplete="off" checked onclick="radio(this)" value="seller">
+                                        autocomplete="off" checked onclick="radio(this)" value="specialist">
                                     <label class="btn text-white" for="specialist">
                                         Specialist
                                     </label>
                                 </div>
                                 <div class=" ml-4 mr-4  rounded border radio_Selection">
                                     <input type="radio" class="btn-check d-none" name="user_type" id="client"
-                                        autocomplete="off" onclick="radio(this)" value="buyer">
+                                        autocomplete="off" onclick="radio(this)" value="client">
                                     <label class="btn " for="client">Client</label>
 
                                 </div>
@@ -273,15 +273,14 @@
                                     placeholder="Link.public.profile" name="public_profile" id="public_profile"
                                     aria-label="" aria-describedby="basic-addon1" readonly="" />
                             </div>
-
-                            <div class="input-group mb-2 border-input pt-3 d-flex flex-nowrap">
-                                <div><em class="fa fa-user"></em></div>
-                                <div class="w-75"><input type="text" class="form-control border-0" placeholder="Enter first name" id="first_name" name="first_name" /></div>
-                            </div>
-                        
-                            <div class="input-group mb-2 border-input pt-3 d-flex flex-nowrap">
-                                <div><em class="fa fa-user"></em></div>
-                                <div class="w-75"><input type="text" class="form-control border-0" placeholder="Enter last name" id="last_name" name="last_name" /></div>
+                            <div class="input-group mb-3 border-input pt-3 d-flex flex-nowrap">
+                                <div>
+                                    {{-- <img src="{{ asset('assets/frontend/images/men-8 (1).png') }}" alt="" /> --}}
+                                    <em class="fa fa-user"></em>
+                                </div>
+                                <div class="w-100"><input type="text" class="w-100 form-control border-0"
+                                        placeholder="Enter your full name" id="name" name="name" aria-label=""
+                                        aria-describedby="basic-addon1" /></div>
                             </div>
 
                             <div class="input-group mb-3 border-input pt-3 d-flex flex-nowrap">
@@ -377,7 +376,7 @@
                                     <em class="fa fa-phone"></em>
                                 </div>
                                 <div class="w-100"> <input type="text" class="form-control border-0 phone-number" readonly
-                                        placeholder="+1 2522856763" name="phone" id="business_phone"
+                                        placeholder="+1 2522856763" name="business_phone" id="business_phone"
                                         aria-label="" aria-describedby="basic-addon1" /></div>
                             </div>
 
@@ -692,7 +691,7 @@
                                         @if(App\Category::all()->count() >0)
                                         <option value="Select Main Category" selected="" disabled="">Select Category</option>
                                         @foreach(App\Category::all() as $category)
-                                        <option value="{{ $category->id }}">{{ ucwords($category->title) }}</option>
+                                        <option value="{{ $category->id }}">{{ ucwords($category->name) }}</option>
                                         @endforeach
                                         @endif
 
@@ -736,10 +735,10 @@
                                     <div class="border-bottom custom-control custom-checkbox ">
                                         <input type="checkbox" class="custom-control-input checkbxCheck days "
                                             onchange="dayOpened(this);" id="customCheck101" name="days[]"
-                                            value="mon">
+                                            value="monday">
                                         <label class="custom-control-label mr-5" for="customCheck101">Monday</label>
                                         <!-- Time select code -->
-                                        <select class="custom-select-reg d-done ml-5 mr-2" style="display:none" name="mon_from">
+                                        <select class="custom-select-reg d-done ml-5 mr-2" style="display:none" name="monday_from">
                                              @for ($j = 1; $j <=2; $j++) @if ($j==1) {{ $interval = "AM" }} @else {{ $interval = "PM" }} @endif @for($i=1;$i<=12;$i++)
                                                 <option value="{{ $i.':'.'00 '.$interval }}"  >{{ $i.':'.'00 '.$interval }}
                                                 </option>
@@ -753,7 +752,7 @@
 
                                         </select>
                                         -
-                                        <select class="custom-select-reg d-done ml-2" style="display:none"  name="mon_to">
+                                        <select class="custom-select-reg d-done ml-2" style="display:none"  name="monday_to">
                                             @for ($j = 1; $j <=2; $j++) @if ($j==1) {{ $interval = "AM" }} @else {{ $interval = "PM" }} @endif @for($i=1;$i<=12;$i++)
                                                 <option value="{{ $i.':'.'00 '.$interval }}"  >{{ $i.':'.'00 '.$interval }}
                                                 </option>
@@ -763,8 +762,7 @@
                                                 </option>
                                                 <option value="{{ $i.':'.'45 '.$interval }}"  >{{ $i.':'.'45 '.$interval }}
                                                 </option>
-                                                @endfor
-                                            @endfor
+                                                @endfor @endfor
 
                                         </select>
                                         <!-- Time select code -->
@@ -776,11 +774,11 @@
                                     <div class="border-bottom mt-3 custom-control custom-checkbox">
                                         <input type="checkbox" class="custom-control-input checkbxCheck days"
                                             onchange="dayOpened(this);" id="customCheck102" name="days[]"
-                                            value="tue">
+                                            value="tuesday">
                                         <label class="custom-control-label mr-5" for="customCheck102">Tuesday</label>
                                         <!-- Time select code -->
                                         <select class="custom-select-reg d-done ml-5 mr-2" style="display:none"
-                                            name="tue_from">
+                                            name="tuesday_from">
                                             @for ($j = 1; $j <=2; $j++) @if ($j==1) {{ $interval = "AM" }} @else {{ $interval = "PM" }} @endif @for($i=1;$i<=12;$i++)
                                                 <option value="{{ $i.':'.'00 '.$interval }}"  >{{ $i.':'.'00 '.$interval }}
                                                 </option>
@@ -795,7 +793,7 @@
                                         </select>
                                         -
                                         <select class="custom-select-reg d-done ml-2" style="display:none"
-                                            name="tue_to">
+                                            name="tuesday_to">
                                             @for ($j = 1; $j <=2; $j++) @if ($j==1) {{ $interval = "AM" }} @else {{ $interval = "PM" }} @endif @for($i=1;$i<=12;$i++)
                                                 <option value="{{ $i.':'.'00 '.$interval }}"  >{{ $i.':'.'00 '.$interval }}
                                                 </option>
@@ -817,11 +815,11 @@
                                     <div class="border-bottom mt-3 custom-control custom-checkbox">
                                         <input type="checkbox" class="custom-control-input checkbxCheck days"
                                             onchange="dayOpened(this);" id="customCheck103" name="days[]"
-                                            value="wed">
+                                            value="wednesday">
                                         <label class="custom-control-label mr-3" for="customCheck103">Wednesday</label>
                                         <!-- Time select code -->
                                         <select class="custom-select-reg d-done ml-5 mr-2" style="display:none"
-                                            name="wed_from">
+                                            name="wednesday_from">
                                             @for ($j = 1; $j <=2; $j++) @if ($j==1) {{ $interval = "AM" }} @else {{ $interval = "PM" }} @endif @for($i=1;$i<=12;$i++)
                                                 <option value="{{ $i.':'.'00 '.$interval }}"  >{{ $i.':'.'00 '.$interval }}
                                                 </option>
@@ -836,7 +834,7 @@
                                         </select>
                                         -
                                         <select class="custom-select-reg d-done ml-2" style="display:none"
-                                            name="wed_to">
+                                            name="wednesday_to">
                                             @for ($j = 1; $j <=2; $j++) @if ($j==1) {{ $interval = "AM" }} @else {{ $interval = "PM" }} @endif @for($i=1;$i<=12;$i++)
                                                 <option value="{{ $i.':'.'00 '.$interval }}"  >{{ $i.':'.'00 '.$interval }}
                                                 </option>
@@ -858,12 +856,12 @@
                                     <div class="border-bottom mt-3 custom-control custom-checkbox">
                                         <input type="checkbox" class="custom-control-input checkbxCheck days"
                                             onchange="dayOpened(this);" id="customCheck104" name="days[]"
-                                            value="thr">
+                                            value="thursday">
                                         <label class="custom-control-label mr-4 pr-3"
                                             for="customCheck104">Thursday</label>
                                         <!-- Time select code -->
                                         <select class="custom-select-reg d-done ml-5 mr-2" style="display:none"
-                                            name="thr_from">
+                                            name="thursday_from">
                                             @for ($j = 1; $j <=2; $j++) @if ($j==1) {{ $interval = "AM" }} @else {{ $interval = "PM" }} @endif @for($i=1;$i<=12;$i++)
                                                 <option value="{{ $i.':'.'00 '.$interval }}"  >{{ $i.':'.'00 '.$interval }}
                                                 </option>
@@ -878,7 +876,7 @@
                                         </select>
                                         -
                                         <select class="custom-select-reg d-done ml-2" style="display:none"
-                                            name="thr_to">
+                                            name="thursday_to">
                                             @for ($j = 1; $j <=2; $j++) @if ($j==1) {{ $interval = "AM" }} @else {{ $interval = "PM" }} @endif @for($i=1;$i<=12;$i++)
                                                 <option value="{{ $i.':'.'00 '.$interval }}"  >{{ $i.':'.'00 '.$interval }}
                                                 </option>
@@ -900,12 +898,12 @@
                                     <div class="border-bottom mt-3 custom-control custom-checkbox">
                                         <input type="checkbox" class="custom-control-input checkbxCheck days"
                                             onchange="dayOpened(this);" id="customCheck105" name="days[]"
-                                            value="fri">
+                                            value="friday">
                                         <label class="custom-control-label mr-5 pr-3"
                                             for="customCheck105">Friday</label>
                                         <!-- Time select code -->
                                         <select class="custom-select-reg d-done ml-5 mr-2" style="display:none"
-                                            name="fri_from">
+                                            name="friday_from">
                                             @for ($j = 1; $j <=2; $j++) @if ($j==1) {{ $interval = "AM" }} @else {{ $interval = "PM" }} @endif @for($i=1;$i<=12;$i++)
                                                 <option value="{{ $i.':'.'00 '.$interval }}"  >{{ $i.':'.'00 '.$interval }}
                                                 </option>
@@ -920,7 +918,7 @@
                                         </select>
                                         -
                                         <select class="custom-select-reg d-done ml-2" style="display:none"
-                                            name="fri_to">
+                                            name="friday_to">
                                             @for ($j = 1; $j <=2; $j++) @if ($j==1) {{ $interval = "AM" }} @else {{ $interval = "PM" }} @endif @for($i=1;$i<=12;$i++)
                                                 <option value="{{ $i.':'.'00 '.$interval }}"  >{{ $i.':'.'00 '.$interval }}
                                                 </option>
@@ -943,11 +941,11 @@
                                     <div class="border-bottom mt-3 custom-control custom-checkbox">
                                         <input type="checkbox" class="custom-control-input checkbxCheck days"
                                             onchange="dayOpened(this);" id="customCheck106" name="days[]"
-                                            value="sat">
+                                            value="saturday">
                                         <label class="custom-control-label mr-5" for="customCheck106">Saturday</label>
                                         <!-- Time select code -->
                                         <select class="custom-select-reg d-done ml-5 mr-2" style="display:none"
-                                            name="sat_from">
+                                            name="saturday_from">
                                             @for ($j = 1; $j <=2; $j++) @if ($j==1) {{ $interval = "AM" }} @else {{ $interval = "PM" }} @endif @for($i=1;$i<=12;$i++)
                                                 <option value="{{ $i.':'.'00 '.$interval }}"  >{{ $i.':'.'00 '.$interval }}
                                                 </option>
@@ -962,7 +960,7 @@
                                         </select>
                                         -
                                         <select class="custom-select-reg d-done ml-2" style="display:none"
-                                            name="sat_to">
+                                            name="saturday_to">
                                             @for ($j = 1; $j <=2; $j++) @if ($j==1) {{ $interval = "AM" }} @else {{ $interval = "PM" }} @endif @for($i=1;$i<=12;$i++)
                                                 <option value="{{ $i.':'.'00 '.$interval }}"  >{{ $i.':'.'00 '.$interval }}
                                                 </option>
@@ -984,12 +982,12 @@
                                     <div class="border-bottom custom-control custom-checkbox">
                                         <input type="checkbox" class="custom-control-input checkbxCheck days"
                                             onchange="dayOpened(this);" id="customCheck107" name="days[]"
-                                            value="sun">
+                                            value="sunday">
                                         <label class="custom-control-label mr-5 pr-3"
                                             for="customCheck107">Sunday</label>
                                         <!-- Time select code -->
                                         <select class="custom-select-reg d-done ml-5 mr-2" style="display:none"
-                                            name="sun_from">
+                                            name="sunday_from">
                                             @for ($j = 1; $j <=2; $j++) @if ($j==1) {{ $interval = "AM" }} @else {{ $interval = "PM" }} @endif @for($i=1;$i<=12;$i++)
                                                 <option value="{{ $i.':'.'00 '.$interval }}"  >{{ $i.':'.'00 '.$interval }}
                                                 </option>
@@ -1004,7 +1002,7 @@
                                         </select>
                                         -
                                         <select class="custom-select-reg d-done ml-2" style="display:none"
-                                            name="sun_to">
+                                            name="sunday_to">
                                             @for ($j = 1; $j <=2; $j++) @if ($j==1) {{ $interval = "AM" }} @else {{ $interval = "PM" }} @endif @for($i=1;$i<=12;$i++)
                                                 <option value="{{ $i.':'.'00 '.$interval }}"  >{{ $i.':'.'00 '.$interval }}
                                                 </option>
@@ -1061,14 +1059,13 @@
             name="public_profile" id="public_profile" aria-label="" aria-describedby="basic-addon1" readonly="" />
     </div>
 
-    <div class="input-group mb-2 border-input pt-3 d-flex flex-nowrap">
-        <div><em class="fa fa-user"></em></div>
-        <div class="w-75"><input type="text" class="form-control border-0" placeholder="Enter first name" id="first_name" name="first_name" /></div>
-    </div>
-
-    <div class="input-group mb-2 border-input pt-3 d-flex flex-nowrap">
-        <div><em class="fa fa-user"></em></div>
-        <div class="w-75"><input type="text" class="form-control border-0" placeholder="Enter last name" id="last_name" name="last_name" /></div>
+    <div class="input-group mb-3 border-input pt-3 d-flex flex-nowrap">
+        <div>
+            {{-- <img src="{{ asset('assets/frontend/images/men-8 (1).png') }}" alt="" /> --}}
+            <em class="fa fa-user"></em>
+        </div>
+        <div class="w-75"><input type="text" class="form-control border-0" placeholder="Enter your name" id="name"
+                name="name" aria-label="" aria-describedby="basic-addon1" /></div>
     </div>
 
     <div class="input-group mb-3 border-input pt-3 d-flex flex-nowrap">
@@ -1133,27 +1130,39 @@
 
 <div id="client-html" style="display: none;">
     <div class="input-group mb-2 border-input pt-4 d-flex flex-nowrap">
-        <div><em class="fa fa-user"></em></div>
-        <div class="w-100"><input type="text" class="form-control border-0 w-100" placeholder="Enter username" name="username" id="username"/></div>
+        <div>
+            {{-- <img src="{{ asset('assets/frontend/images/men-8 (1).png') }}" alt="" /> --}}
+            <em class="fa fa-user"></em>
+        </div>
+        <div class="w-100">
+            <input type="text" class="form-control border-0 w-100" placeholder="Enter username" name="username"
+                id="username" onkeyup="usernamePublicProfile(this);" aria-label="" aria-describedby="basic-addon1" />
+        </div>
     </div>
 
     <div class="input-group mb-2 border-input pt-3 d-flex flex-nowrap">
-        <div><em class="fa fa-user"></em></div>
-        <div class="w-75"><input type="text" class="form-control border-0" placeholder="Enter first name" id="client_first_name" name="first_name" /></div>
+        <div>
+            {{-- <img src="{{ asset('assets/frontend/images/men-8 (1).png') }}" alt="" /> --}}
+            <em class="fa fa-user"></em>
+        </div>
+        <div class="w-75"><input type="text" class="form-control border-0" placeholder="Enter your full name"
+                id="client-name" name="name" aria-label="" aria-describedby="basic-addon1" /></div>
     </div>
 
     <div class="input-group mb-2 border-input pt-3 d-flex flex-nowrap">
-        <div><em class="fa fa-user"></em></div>
-        <div class="w-75"><input type="text" class="form-control border-0" placeholder="Enter last name" id="client_last_name" name="last_name" /></div>
-    </div>
-
-    <div class="input-group mb-2 border-input pt-3 d-flex flex-nowrap">
-        <div><em class="fa fa-envelope"></em></div>
-        <div class="w-100"><input type="email" class="form-control border-0 w-100" placeholder="Enter your email" id="client-email" name="email" /></div>
+        <div>
+            {{-- <img src="{{ asset('assets/frontend/images/sms -8.png') }}" alt="" /> --}}
+            <em class="fa fa-envelope"></em>
+        </div>
+        <div class="w-100"><input type="email" class="form-control border-0 w-100" placeholder="Enter your email"
+                id="client-email" aria-label="" aria-describedby="basic-addon1" name="email" /></div>
     </div>
 
     <div class="input-group mb-2 border-input pt-3  d-flex flex-nowrap">
-        <div><em class="fa fa-map-marker"></em></div>
+        <div>
+            {{-- <img src="{{ asset('assets/frontend/images/sms -8.png') }}" alt="" /> --}}
+            <em class="fa fa-map-marker"></em>
+        </div>
         <div class="w-100">
             <select id="country" name="country" onchange="countryChange(this);" class="client-select form-control country-select w-100">
                 <option selected disabled>Choose a Country...</option>
@@ -1165,20 +1174,33 @@
     </div>
 
     <div class="input-group mb-2 border-input pt-3 d-flex flex-nowrap">
-        <div> <em class="fa fa-phone"></em></div>
-        <div class="w-100"> <input type="text" class="w-100 form-control border-0 phone-number" placeholder="+1 2522856763" name="phone" readonly id="client-phone"></div>
+        <div>
+            {{-- <img src="{{ asset('assets/frontend/images/phone-8.png') }}" alt="" /> --}}
+            <em class="fa fa-phone"></em>
+        </div>
+        <div class="w-100"> <input type="text" class="w-100 form-control border-0 phone-number"
+                placeholder="+1 2522856763" name="client_phone" readonly id="client-phone" aria-label=""
+                aria-describedby="basic-addon1" /></div>
     </div>
 
     <div class="input-group mb-2 border-input pt-3 d-flex flex-nowrap">
-        <div><em class="fa fa-key"></em></div>
-        <div class="w-100"><input type="password" class="form-control border-0 w-100" placeholder="Enter your password" name="password" id="client-password" /></div>
-    </div> 
+        <div>
+            {{-- <img src="{{ asset('assets/frontend/images/key-8.png') }}" alt="" /> --}}
+            <em class="fa fa-key"></em>
+        </div>
+        <div class="w-100"><input type="password" class="form-control border-0 w-100" placeholder="Enter your password"
+                name="password" id="client-password" aria-label="" aria-describedby="basic-addon1" /></div>
+    </div>
     <p class="text-danger d-none" id="password-error"></p>
 
     <div class="input-group mb-4 border-input pt-3 d-flex flex-nowrap">
-        <div><em class="fa fa-key"></em></div>
+        <div>
+            {{-- <img src="{{ asset('assets/frontend/images/key-8.png') }}" alt="" /> --}}
+            <em class="fa fa-key"></em>
+        </div>
         <div class="w-75"><input type="password" class="form-control border-0" placeholder="Confirm your password"
-                name="password_confirmation" id="client_confirm_password" /></div>
+                name="password_confirmation" id="client_confirm_password" aria-label=""
+                aria-describedby="basic-addon1" /></div>
     </div>
 
     <div class="input-group mb-3 border-input pt-3 d-flex flex-nowrap">
@@ -1197,9 +1219,13 @@
 
     <div class="input-group mb-3 border-input pt-3 d-flex flex-nowrap verify_number_div"
         style="display: none !important;">
-        <div><em class="fa fa-university"></em></div>
+        <div>
+            {{-- <img src="{{ asset('assets/frontend/images/sms -8.png') }}" alt="" /> --}}
+            <em class="fa fa-university"></em>
+        </div>
         <div class="w-100"><input type="number" id="verification_number" maxlength="6"
-                class="w-100 form-control border-0" placeholder="Enter Verification Code" name="routing_number" /></div>
+                class="w-100 form-control border-0" placeholder="Enter Verification Code" aria-label=""
+                aria-describedby="basic-addon1" name="routing_number" /></div>
     </div>
     <input type="button" class="btn bg-3AC574 w-100 mt-3 pt-2 pb-2  text-white btnstep client-verify"
         onClick="sendPhoneCode(this);" value="Save" />
@@ -1388,15 +1414,15 @@
         let user_type = $('input[name="user_type"]:checked').val();
         let chk = false;
         
-        if (user_type == 'buyer') {
-            if (inptFieldValidate($('#username')) && inptFieldValidate($('#client_first_name')) && inptFieldValidate($('#client_last_name')) && inptFieldValidate($(
+        if (user_type == 'client') {
+            if (inptFieldValidate($('#username')) && inptFieldValidate($('#client-name')) && inptFieldValidate($(
                     '#client-email')) && inptFieldValidate($('#client-phone')) && passwordFieldValidate($(
                     '#client-password'), $('#client_confirm_password'))) {
                 chk = true;
             }
 
-        } else if (user_type == 'seller') {
-            if (inptFieldValidate($('#username')) && inptFieldValidate($('#first_name')) && inptFieldValidate($('#last_name')) && inptFieldValidate($('#email')) &&
+        } else if (user_type == 'specialist') {
+            if (inptFieldValidate($('#username')) && inptFieldValidate($('#name')) && inptFieldValidate($('#email')) &&
                 passwordFieldValidate($('#password'), $('#confirm_password')) && fileValidate($('#avatar'))) {
                 chk = true;
             }
@@ -1436,8 +1462,10 @@
     function codeVerify(code) {
         coderesult.confirm(code).then(function (result) {
             var user = result.user;
+            // console.log(user);
             $('#code_check').val('true');
         }).catch(function (error) {
+            // console.log(error.message);
             swal({
                 icon: "error",
                 text: "{{ __('Please Enter Valid Verification Code') }}",
@@ -1516,13 +1544,14 @@
         $(ele).parent().addClass('bg-3AC574');
         $(ele).parent().siblings().removeClass('bg-3AC574');
         $(ele).parent().siblings().find('label').removeClass('text-white');
+        // $(ele).siblings().removeClass('text-white');
         $(ele).siblings().addClass('text-white');
-        if ($(ele).val() == 'buyer') {
+        if ($(ele).val() == 'client') {
             btnClicK('dot-100', 'width-100', 'No Credit Cards. <br> No Commitments <br> It takes only 2 minutes.');
             $('.first-step-html-change').html(document.getElementById('client-html').innerHTML);
             render();
 
-        } else if ($(ele).val() == 'seller') {
+        } else if ($(ele).val() == 'specialist') {
             btnClicKBack('dot-100', 'width-100', 'dot-0', 'width-0',
                 'No Credit Cards. <br> No Commitments <br> It takes only 2 minutes.')
             $('.first-step-html-change').html(document.getElementById('specialist-html').innerHTML);
@@ -1536,6 +1565,7 @@
         $(ele).parent().addClass('bg-3AC574');
         $(ele).parent().siblings().removeClass('bg-3AC574');
         $(ele).parent().siblings().find('label').removeClass('text-white');
+        // $(ele).siblings().removeClass('text-white');
         $(ele).siblings().addClass('text-white');
 
         if ($(ele).val() == 'stripe') {
@@ -1551,7 +1581,6 @@
     }
 
     function inptFieldValidate(id) {
-        console.log(id);
         if ($(id).val() == '') {
             $(id).addClass('placeholder-color-change');
             $(id).parent('div').parent('div').removeClass('border-input');
@@ -1671,6 +1700,7 @@
             type: "post",
             processData: false,
             contentType: false,
+            // data: $('#add-client-form').serialize(),
             data: fd,
             success: function (data) {
                 $('#registerForm').hide();
@@ -1712,6 +1742,8 @@
                             content: wrapper,
                             type: 'error'
                         });
+                        // $('.warningAlert').show();
+                        // $('.warningAlertContent').html(wrapper);
                     }
                 }
             }
@@ -1745,7 +1777,7 @@
             });
         } else {
             meCheckSubCategory = false;
-            $.each($('input[name="sub_category_id"]'), function () {
+            $.each($('input[name="sub_category_id[]"]'), function () {
                 if ($(this).is(':checked')) {
                     meCheckSubCategory = true;
                 }
@@ -1757,7 +1789,6 @@
                     type: 'error'
                 });
             } else {
-                $('#select_category').val($('input[name="sub_category_id"]:checked').siblings('label').text());
                 $('.close1').click();
             }
         }
@@ -1765,7 +1796,7 @@
 
     function checkboxSubCategory() {
         meCheckSubCategory = false;
-        $.each($('input[name="sub_category_id"]'), function () {
+        $.each($('input[name="sub_category_id[]"]'), function () {
             if ($(this).is(':checked')) {
                 meCheckSubCategory = true;
             }
@@ -1778,7 +1809,7 @@
             $('#select_category').parent('div').parent('div').css("border-bottom", "1px solid #e91e63");
             $('#select_category').parent('div').siblings('div').children('em').css("color", "#e91e63");
         } else {
-            $('#select_category').val($('input[name="sub_category_id"]:checked').siblings('label').text());
+            $('#select_category').val($('select[name="category_id"] option:selected').text());
         }
         return meCheckSubCategory
     }
@@ -1801,6 +1832,32 @@
         $(id).parent('div').siblings('div').children('em').css("color", "#3ac574");
         $(id).parent('div').parent('div').css("border-bottom", "1px solid #3ac574");
         return true;
+
+        // First check for the pattern
+        // if(!/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateString))
+        // {
+        //     return false;
+        // }
+
+
+        // Parse the date parts to integers
+        // var parts = dateString.split("/");
+        // var day = parseInt(parts[1], 10);
+        // var month = parseInt(parts[0], 10);
+        // var year = parseInt(parts[2], 10);
+
+        // Check the ranges of month and year
+        // if(year < 1000 || year > 3000 || month == 0 || month > 12)
+        //     return false;
+
+        // var monthLength = [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ];
+
+        // Adjust for leap years
+        // if(year % 400 == 0 || (year % 100 != 0 && year % 4 == 0))
+        //     monthLength[1] = 29;
+
+        // Check the range of the day
+        // return day > 0 && day <= monthLength[month - 1];
     }
 
     function ssnFieldValidate(id) {
@@ -2066,7 +2123,7 @@
 
     $(document.body).on("click", "input.client-step1", function () {
         // $(this).parent("div").siblings("span.inputBtn").click();
-        if (inptFieldValidate($('#username')) && inptFieldValidate($('#client_first_name')) && inptFieldValidate($('#client_last_name')) && inptFieldValidate($(
+        if (inptFieldValidate($('#username')) && inptFieldValidate($('#client-name')) && inptFieldValidate($(
                 '#client-email')) && inptFieldValidate($('#client-phone')) && passwordFieldValidate($(
                 '#client-password'), $('#client_confirm_password'))) {
             if ($('#code_send_check').val() == 'true' && $('#code_check').val() == 'false') {
@@ -2118,39 +2175,39 @@
     });
 
     $(document.body).on("click", "input.step1", function () {
-        $(this).parent("div").siblings("span.inputBtn").click();
-        // if (inptFieldValidate($('#username')) && inptFieldValidate($('#first_name')) && inptFieldValidate($('#last_name')) && inptFieldValidate($(
-        //     '#email')) && passwordFieldValidate($('#password'), $('#confirm_password')) && fileValidate($(
-        //         '#avatar'))) {
-        //     $.ajax({
-        //         url: "{{ route('usernameCheck') }}",
-        //         type: "get",
-        //         data: {
-        //             username: $('#username').val(),
-        //             email: $('#email').val()
-        //         },
-        //         success: function (data) {
-        //             if (data.status == false) {
-        //                 var wrapper = document.createElement('div');
-        //                 var err = '';
-        //                 $.each(data.errors, function (i, e) {
-        //                     err += '<p>' + i + ' ' + e + ' has been already taken.' +
-        //                     '</p>';
-        //                 });
-        //                 wrapper.innerHTML = err;
-        //                 swal({
-        //                     icon: "error",
-        //                     text: "{{ __('Please fix following error!') }}",
-        //                     content: wrapper,
-        //                     type: 'error'
-        //                 });
-        //             } else {
-        //                 $('input.step1').parent("div").siblings("span.inputBtn").click();
-        //             }
+        // $(this).parent("div").siblings("span.inputBtn").click();
+        if (inptFieldValidate($('#username')) && inptFieldValidate($('#name')) && inptFieldValidate($(
+            '#email')) && passwordFieldValidate($('#password'), $('#confirm_password')) && fileValidate($(
+                '#avatar'))) {
+            $.ajax({
+                url: "{{ route('usernameCheck') }}",
+                type: "get",
+                data: {
+                    username: $('#username').val(),
+                    email: $('#email').val()
+                },
+                success: function (data) {
+                    if (data.status == false) {
+                        var wrapper = document.createElement('div');
+                        var err = '';
+                        $.each(data.errors, function (i, e) {
+                            err += '<p>' + i + ' ' + e + ' has been already taken.' +
+                            '</p>';
+                        });
+                        wrapper.innerHTML = err;
+                        swal({
+                            icon: "error",
+                            text: "{{ __('Please fix following error!') }}",
+                            content: wrapper,
+                            type: 'error'
+                        });
+                    } else {
+                        $('input.step1').parent("div").siblings("span.inputBtn").click();
+                    }
 
-        //         }
-        //     });
-        // }
+                }
+            });
+        }
     });
 
     $(document.body).on("click", "input.step2", function () {
@@ -2168,6 +2225,14 @@
                 if ($('#code_check').val() == 'false') {
                     codeVerify($('#verification_number').val());
                 }
+                // else if($('#code_check').val() =='true')
+                // {
+                //     swal({
+                //         icon: "error",
+                //         text: "{{ __('Please Verify Your Phone Number') }}",
+                //         type: 'error'
+                //     });
+                // }
 
                 if ($('#code_check').val() == 'true') {
                     $(this).parent("div").siblings("span.inputBtn").click();
@@ -2206,6 +2271,25 @@
             fd.append('days', days);
             ajaxCommonCode(fd);
         }
+        // if(inptFieldValidate($('#payment_email')) && inptFieldValidate($('#payment_password')))
+        // {
+        // $('#registerForm').submit();
+        // var myform = document.getElementById("registerForm");
+        // var fd = new FormData(myform);
+        // fd.append("_token","{{ csrf_token() }}");
+        // let days = $(".days:checked").map(function(){return $(this).val();}).get();
+        // let from = $(".from_time").map(function(){return $(this).val();}).get();
+        // let to = $(".to_time").map(function(){return $(this).val();}).get();
+        // $.each(days,function(i,v){
+        //     console.log(v);
+        // });
+        // return false;
+        // fd.append('days',days);
+        // fd.append('from',from);
+        // fd.append('to',to);
+        // ajaxCommonCode(fd);
+        // }
+        // let v = $(this).parent("div").siblings("span.inputBtn").click();
     });
 
 

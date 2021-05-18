@@ -11,6 +11,11 @@
         display: none;
     }
 
+
+
+
+
+
     #clock.light .digits div span {
         background-color: #fff;
         border-color: #fff;
@@ -20,6 +25,8 @@
     #clock.light .digits div.dots:after {
         background-color: #fff;
     }
+
+
 
     #clock .digits div {
         text-align: left;
@@ -327,39 +334,75 @@
         <div class="row m-0 pl-0 pr-0 pt-4 pb-4">
             <div class="col-md-6 col-lg-6">
                 <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+                    {{-- <ol class="carousel-indicators">
+                <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+                <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+                <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+              </ol> --}}
                     <div class="carousel-inner">
                         <div class="carousel-item active h-513">
-                            <img src="{{ ($specialist->picture != null) ? asset($specialist->picture) : asset('assets/frontend/images/avatar-large.png')  }}"
+                            <img src="{{ ($specialist->user->avatar != null) ? asset($specialist->user->avatar) : asset('assets/frontend/images/avatar-large.png')  }}"
                                 class="d-block w-100 img-fluid h-100" alt="...">
                         </div>
+                        {{-- <div class="carousel-item">
+                <img src="{{ asset('assets/frontend/images/Group 152.png') }}" class="d-block w-100 img-fluid"
+                        alt="...">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="{{ asset('assets/frontend/images/Group 152.png') }}" class="d-block w-100 img-fluid"
+                            alt="...">
+                    </div> --}}
                 </div>
+                {{-- <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+              </a>
+              <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+              </a> --}}
             </div>
         </div>
         <div class="col-md-5 col-lg-6 cl-ffffff pl-5 pr-5">
             <div class="d-flex justify-content-between align-items-center">
-                <div class=" f-44 robotoMedium">{{ ucwords($specialist->username) }}</div>
+                <div class=" f-44 robotoMedium">{{ ucwords($specialist->user->username) }}</div>
                 <div id="time"></div>
+
+                {{-- <div id="clock" class="light">
+                  <div class="display d-flex align-items-baseline">
+                    <div class="digits"></div>
+                    <div class="ampm ml-2"></div>
+                  </div>
+                </div> --}}
             </div>
             <div class="d-flex border-bottom pb-3">
-                <div class="pr-3 robotoMedium">{{ ucwords($category->title) }}</div>
-                @if($specialist->country)
+                <div class="pr-3 robotoMedium">{{ ucwords($specialist->category->name) }}</div>
+                @if($specialist->user->country)
                 <div class="border-left"></div>
-                <div class="pl-3 pr-3 robotoRegular">{{ ucfirst($specialist->country) }}</div>
+                <div class="pl-3 pr-3 robotoRegular">{{ ucfirst($specialist->user->country) }}</div>
                 @endif
 
                 @if($specialist->address !=null)
-                    <div class="border-left"></div>
-                    <div class="pl-3 robotoRegular">{{ ucfirst($specialist->address) }}</div>
+                <div class="border-left"></div>
+                <div class="pl-3 robotoRegular">{{ ucfirst($specialist->address) }}</div>
                 @endif
 
             </div>
-            
             @if($specialist->description !=null)
-                <div class="border-bottom pb-3">
-                    <div class="robotoMedium f-18 pt-3">About Me</div>
-                    <div class="robotoRegular f-18 text-justify pt-3">{{ucfirst($specialist->description)}}
-                    </div>
+            <div class="border-bottom pb-3">
+                <div class="robotoMedium f-18 pt-3">About Me</div>
+                <div class="robotoRegular f-18 text-justify pt-3">{{ucfirst($specialist->description)}}
                 </div>
+            </div>
+            @endif
+
+            @if($specialist->specifications !=null)
+            <div class="border-bottom pb-3  f-18">
+                <div class="robotoMedium pt-3">Specifications:</div>
+                <div class="robotoRegular pt-3">Confirmed Appointment</div>
+                <div class="robotoRegular pt-3">Timings Decided</div>
+
+            </div>
             @endif
 
             @if($specialist->languages !=null)
@@ -367,126 +410,123 @@
                     <div class="robotoMedium pt-3">Languages</div>
                     <div class="d-flex pt-3  robotoRegular">
                         <div class="ml-3">
-                            @foreach(explode(',',$specialist->languages) as $language)
+                            @foreach(json_decode($specialist->languages) as $language)
                                 <div>{{ ucfirst($language) }}</div>
                             @endforeach
-                           
+                            {{-- <div>English</div>
+                            <div class="pt-3">French</div>
+                            <div class="pt-3">Portuguese</div> --}}
                         </div>
+                        {{-- <div class="pl-5">
+                            <div>Primary</div>
+                            <div class="pt-3">Secondary</div>
+                            <div class="pt-3">Secondary</div>
+                        </div> --}}
                     </div>
                 </div>
             @endif
-            
-            @if($specialist->availableTime)
+
+            @if(json_decode($specialist->opening_hours))
                 <div class="border-bottom pb-3  f-18">
                     <div class="robotoMedium f-18 pt-3">Days & Hours of Availability</div>
-                    @foreach(['mon','tue','wed','thr','fri','sat','sun'] as $d)
-                        @if($specialist->availableTime->$d !="Closed")
-                            @php $arr = explode('~',$specialist->availableTime->$d); @endphp
-                            <div class="row ml-3">
-                                <div class="col-md-3 text-left ">{{ ucfirst($d) }}</div>
-                                <div class="col-md-3 text-center">
-                                    {{ \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d h:i:s',$arr[0]/1000),config('app.timezone'))->timezone(Auth::user()->timezone)->format('h:i A') }}
-                                </div>
-                                <div class="col-md-3 text-center"> - </div>
-                                <div class="col-md-3 text-center">
-                                    {{ \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d h:i:s',$arr[1]/1000),config('app.timezone'))->timezone(Auth::user()->timezone)->format('h:i A') }}
-                                </div>
-                            </div>
-                        @endif
+                    @foreach(json_decode($specialist->opening_hours) as $key=>$value)
+
+                    <div class="row ml-3">
+                        <div class="col-md-3 text-left ">{{ ucfirst($key) }}</div>
+                        <div class="col-md-3 text-center">
+                            {{ getTimeZoneTime($specialist->user->time_zone,Auth::user()->time_zone,$key.' '.json_decode($specialist->opening_hours)->$key[0]) }}
+                        </div>
+                        <div class="col-md-3 text-center"> - </div>
+                        <div class="col-md-3 text-center">
+                            {{ getTimeZoneTime($specialist->user->time_zone,Auth::user()->time_zone,$key.' '.json_decode($specialist->opening_hours)->$key[1]) }}
+                        </div>
+                    </div>
+
                     @endforeach
+                    {{-- <div class="robotoMedium pt-3">Specifications:</div>
+                <div class="robotoRegular pt-3">Confirmed Appointment</div>
+                <div class="robotoRegular pt-3">Timings Decided</div> --}}
+
                 </div>
             @endif
+
+            {{-- <div class=" pb-3 robotoMedium f-18">
+            <div class="pt-3">Share:</div>
+            <div class="d-flex pt-3">
+            <div><img src="{{ asset('assets/frontend/images/Subtraction 1.png') }}" alt="" srcset="">
+        </div>
+        <div class="pl-3"><img src="{{ asset('assets/frontend/images/Group 1.png') }}" alt="" srcset=""></div>
+        <div class="pl-3"><img src="{{ asset('assets/frontend/images/Group 2.png') }}" alt="" srcset=""></div>
+        <div class="pl-3"> <img src="{{ asset('assets/frontend/images/Group 3.png') }}" alt="" srcset=""></div>
+        @if($specialist->user->username)<div class="f-13 robotoMedium pl-3">
+            {{ URL::to('/') }}/{{ $specialist->user->username }}</div>@endif
+        </div>
+        </div> --}}
         </div>
     </section>
 </section>
 
-
-@if($specialist->serviceCategories->count() >0)
-    <section class="main_padding pt-5">
-        <div class="row m-0 p-0">
-            <div class="robotoMedium cl-000000 f-34 pt-2 d-flex align-items-end">Services:</div>
-            <div class="col-md-3 ml-auto p-0">
-                <div class="d-flex m-0">
-                    <div class="pt-4 w-100">
-                        <input type="text" placeholder="Search for services"
-                            class="service_inpt robotoRegular h-44 cl-6b6b6b bg-transparent footer_input pt-2 pb-2 pl-3 w-100 rounded">
-                    </div>
-                    <div class="pt-4 pl-2">
-                        <button
-                            class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-3ac574  pt-2 pb-2 pl-2 pr-2 service_inpt_btn"
-                            type="button" onclick="inputSearchServices();"><img
-                                src="{{ asset('assets/frontend/images/Group 188.png ') }}" alt=""></button>
-                    </div>
+@if($specialist->services->count() > 0)
+<section class="main_padding pt-5">
+    <div class="row m-0 p-0">
+        <div class="robotoMedium cl-000000 f-34 pt-2 d-flex align-items-end">Services:</div>
+        <div class="col-md-3 ml-auto p-0">
+            <div class="d-flex m-0">
+                <div class="pt-4 w-100">
+                    <input type="text" placeholder="Search for services"
+                        class="service_inpt robotoRegular h-44 cl-6b6b6b bg-transparent footer_input pt-2 pb-2 pl-3 w-100 rounded">
+                </div>
+                <div class="pt-4 pl-2">
+                    <button
+                        class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-3ac574  pt-2 pb-2 pl-2 pr-2 service_inpt_btn"
+                        type="button" onclick="inputSearchServices();"><img
+                            src="{{ asset('assets/frontend/images/Group 188.png ') }}" alt=""></button>
                 </div>
             </div>
-
-            <div class="table-responsive tableFixHead table_scroll mt-5 border robotoRegular">
-                <table id="boxes-list" class="table m-0 header-fixed">
-
-                    <thead class="sticky-top bg-white cl-3ac754 ">
-                        <tr class="bg-white robotoRegular ">
-                            <th scope="col">Service</th>
-                            <th scope="col">Duration</th>
-                            <th scope="col">Rate</th>
-                            <th scope="col">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody class="table_scroll services-table-body">
-                        @foreach($specialist->serviceCategories as $serviceCategory)
-
-                            @if($specialist->serviceCategory->t_15!=null)
-
-                                <tr class="border-bottom">
-                                    <td>{{ ucwords($serviceCategory->name) }}</td>
-                                    <td>15 Minutes</td>
-                                    <td> ${{number_format(intval($serviceCategory->t_15)) }} (USD)</td>
-                                    <td><a href="{{ route('appointment_request',encrypt($serviceCategory->id)) }}?time=15"
-                                            class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-3ac574  pl-5 pr-5 login_button">Book</a>
-                                    </td>
-                                </tr>
-                            @endif
-                            @if($serviceCategory->t_30!=null)
-
-                                <tr class="border-bottom">
-                                    <td>{{ ucwords($serviceCategory->name) }}</td>
-                                    <td>30 Minutes</td>
-                                    <td> ${{number_format(intval($serviceCategory->t_30)) }} (USD)</td>
-                                    <td><a href="{{ route('appointment_request',encrypt($serviceCategory->id)) }}?time=30"
-                                            class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-3ac574  pl-5 pr-5 login_button">Book</a>
-                                    </td>
-                                </tr>
-                            @endif
-                            @if($serviceCategory->t_45!=null)
-
-                                <tr class="border-bottom">
-                                    <td>{{ ucwords($serviceCategory->name) }}</td>
-                                    <td>45 Minutes</td>
-                                    <td> ${{number_format(intval($serviceCategory->t_45)) }} (USD)</td>
-                                    <td><a href="{{ route('appointment_request',encrypt($serviceCategory->id)) }}?time=45"
-                                            class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-3ac574  pl-5 pr-5 login_button">Book</a>
-                                    </td>
-                                </tr>
-                            @endif
-                            @if($serviceCategory->t_60!=null)
-
-                                <tr class="border-bottom">
-                                    <td>{{ ucwords($serviceCategory->name) }}</td>
-                                    <td>60 Minutes</td>
-                                    <td> ${{number_format(intval($serviceCategory->t_60)) }} (USD)</td>
-                                    <td><a href="{{ route('appointment_request',encrypt($serviceCategory->id)) }}?time=60"
-                                            class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-3ac574  pl-5 pr-5 login_button">Book</a>
-                                    </td>
-                                </tr>
-                            @endif  
-
-                        @endforeach
-                        
-                    </tbody>
-                </table>
-            </div>
-
         </div>
-    </section>
+
+        <div class="table-responsive tableFixHead table_scroll mt-5 border robotoRegular">
+            <table id="boxes-list" class="table m-0 header-fixed">
+
+                <thead class="sticky-top bg-white cl-3ac754 ">
+                    <tr class="bg-white robotoRegular ">
+                        <th scope="col">No</th>
+                        <th scope="col">Service</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Subcategory</th>
+                        <th scope="col">Duration</th>
+                        <th scope="col">Rate</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="table_scroll services-table-body">
+                    @foreach($specialist->services as $key=>$service)
+                    <tr class="border-bottom">
+                        <th scope="row">{{ ++$key }}</th>
+                        <td>{{ ucwords($service->title) }}</td>
+                        <td>{{ ucwords($service->category->name) }}</td>
+                        @php
+                        $subcategories =
+                        App\SubCategory::whereIn('id',json_decode($service->sub_categories))->get()->pluck('name')->toArray();
+                        @endphp
+                        <td>{{ implode(',',array_map('ucwords',$subcategories)) }}</td>
+                        <td>{{ $service->timing }} Minutes</td>
+                        <td> ${{number_format(intval($service->rate)) }} (USD)</td>
+                        <td>{{ $service->status }}</td>
+                        <td><a href="{{ route('appointment_request',encrypt($service->id)) }}"
+                                class="btn btn-outline-success my-2 my-sm-0 cl-ffffff bg-3ac574  pl-5 pr-5 login_button">Book</a>
+                        </td>
+                    </tr>
+
+                    @endforeach
+
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</section>
 @endif
 
 @if($specialist->portfolios->count() >0 )
@@ -500,13 +540,13 @@
         <div class="row m-0">
             @foreach ($specialist->portfolios->take(1) as $portfolio)
             <div class="col-lg-7 col-md-7 col-sm-12 pl-0 pr-0 bg_img_8 d-flex flex-column  justify-content-end"  >
-                <img src="{{ $portfolio->image }}" alt="" class="w-100 h-100 border-10">
+                <img src="{{ asset($portfolio->image) }}" alt="" class="w-100 h-100 border-10">
             </div>
             @endforeach
             <div class="col-lg-5 col-md-5 col-sm-12 pr-0 d-flex flex-column justify-content-between">
                 @foreach ($specialist->portfolios->skip(1)->take(2) as $portfolio)
                     <div class="bg_imgcol-5 d-flex flex-column  justify-content-end">
-                        <img src="{{ $portfolio->image }}" alt="" class="w-100 h-100 border-10">
+                        <img src="{{ asset($portfolio->image) }}" alt="" class="w-100 h-100 border-10">
                     </div>
                 @endforeach
             </div>
@@ -519,7 +559,7 @@
 @endif
 
 
-{{-- @if($specialist->ratings->count() > 0)
+@if($specialist->ratings->count() > 0)
     <section class=" main_padding pt-5">
         <div class="row m-0">
             <div class="col-md-8 col-lg-8 pl-0">
@@ -538,11 +578,12 @@
                     if we know the reviewer has visited this business.
                 </div>
 
+                <!-- COMMENTS SECTION START -->
                 @if (isset($specialist->ratings))
                     
                     @foreach ($specialist->ratings as $rating)
                         <div class="d-flex pt-5">
-                            <div class="img_commentSection"><img src="{{ asset($rating->picture) }}"
+                            <div class="img_commentSection"><img src="{{ asset($rating->user->avatar) }}"
                                     alt="" srcset=""></div>
                             <div class="content_commentSection pl-4">
                                 <div>
@@ -566,10 +607,85 @@
             </div>
         </div>
         <div class="col-md-4 p-0">
-            
+            {{-- <section>
+                <div class="row m-0 pt-2 card_boxShadow pt-4 pb-3">
+                    <div class="col-md-5 text-center">
+                        <div class="f-41 cl-616161 robotoRegular">5.0<span
+                                class="robotoRegular f-16 cl-979797">/5</span></div>
+                        <div class="d-flex align-items-center justify-content-center">
+                            <div><img src="{{ asset('assets/frontend/images/Path 70.png') }}" alt="" srcset=""></div>
+                            <div class="pl-2"><img src="{{ asset('assets/frontend/images/Path 70.png') }}" alt=""
+                                    srcset=""></div>
+                            <div class="pl-2"><img src="{{ asset('assets/frontend/images/Path 70.png') }}" alt=""
+                                    srcset=""></div>
+                            <div class="pl-2"><img src="{{ asset('assets/frontend/images/Path 70.png') }}" alt=""
+                                    srcset=""></div>
+                            <div class="pl-2"><img src="{{ asset('assets/frontend/images/Path 70.png') }}" alt=""
+                                    srcset=""></div>
+
+
+
+                        </div>
+                        <div class="f-19 robotoRegular cl-a2a2a2 pt-3">150 reviews</div>
+                    </div>
+
+                    <div class="progressBarmainDiv robotoRegular cl-a2a2a2 col-md-7 pl-0">
+                        <div class="d-flex align-items-center">
+                            <div class="f-16 pr-2">5</div>
+                            <div class="progress w-261 h-6px">
+                                <div class="progress-bar bg-3ac574 borderRadius-12px" role="progressbar"
+                                    style="width: 100%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <div class="pl-2">85%</div>
+                        </div>
+                        <div class="d-flex align-items-center pt-2">
+                            <div class="f-16 pr-2">4</div>
+                            <div class="progress w-261 h-6px">
+                                <div class="progress-bar bg-3ac574 borderRadius-12px" role="progressbar"
+                                    style="width: 45%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <div class="pl-2">40%</div>
+                        </div>
+                        <div class="d-flex align-items-center pt-2">
+                            <div class="f-16 pr-2">3</div>
+                            <div class="progress w-261 h-6px">
+                                <div class=" borderRadius-12px" role="progressbar" style="width: 45%;"
+                                    aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+
+
+
+                            <div class="pl-2">0</div>
+                        </div>
+                        <div class="d-flex align-items-center pt-2">
+                            <div class="f-16 pr-2">2</div>
+                            <div class="progress w-261 h-6px">
+                                <div class=" borderRadius-12px" role="progressbar" style="width: 45%;"
+                                    aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+
+
+
+                            <div class="pl-2">0</div>
+                        </div>
+                        <div class="d-flex align-items-center pt-2">
+                            <div class="f-16 pr-2">1</div>
+                            <div class="progress w-261 h-6px">
+                                <div class=" borderRadius-12px" role="progressbar" style="width: 45%;"
+                                    aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+
+
+
+                            <div class="pl-2">0</div>
+                        </div>
+
+                    </div>
+                </div>
+            </section> --}}
         </div>
     </section>
-@endif --}}
+@endif
 
 
 
@@ -617,6 +733,193 @@
         }
     });
 
+
+
+
+    // $(document).ready(function() {
+    //   clockUpdate();
+    //   setInterval(clockUpdate, 1000);
+    // })
+
+    // function clockUpdate() {
+    //   var date = new Date();
+    //   $('.digital-clock').css({'color': '#fff', 'text-shadow': '0 0 6px #ff0'});
+    //   function addZero(x) {
+    //     if (x < 10) {
+    //       return x = '0' + x;
+    //     } else {
+    //       return x;
+    //     }
+    //   }
+
+    //   function twelveHour(x) {
+    //     if (x > 12) {
+    //       return x = x - 12;
+    //     } else if (x == 0) {
+    //       return x = 12;
+    //     } else {
+    //       return x;
+    //     }
+    //   }
+
+    //   var h = addZero(twelveHour(date.getHours()));
+    //   var m = addZero(date.getMinutes());
+    //   var s = addZero(date.getSeconds());
+
+    //   $('.digital-clock').text(h + ':' + m + ':' + s)
+    // }
+
+
+
+    $(function () {
+
+        // Cache some selectors
+
+        var clock = $('#clock'),
+            alarm = clock.find('.alarm'),
+            ampm = clock.find('.ampm');
+
+        // Map digits to their names (this will be an array)
+        var digit_to_name = 'zero one two three four five six seven eight nine'.split(' ');
+
+        // This object will hold the digit elements
+        var digits = {};
+
+        // Positions for the hours, minutes, and seconds
+        var positions = [
+            'h1', 'h2', ':', 'm1', 'm2'
+        ];
+
+        // Generate the digits with the needed markup,
+        // and add them to the clock
+
+        var digit_holder = clock.find('.digits');
+
+        $.each(positions, function () {
+
+            if (this == ':') {
+                digit_holder.append('<div class="dots">');
+            } else {
+
+                var pos = $('<div>');
+
+                for (var i = 1; i < 8; i++) {
+                    pos.append('<span class="d' + i + '">');
+                }
+
+                // Set the digits as key:value pairs in the digits object
+                digits[this] = pos;
+
+                // Add the digit elements to the page
+                digit_holder.append(pos);
+            }
+
+        });
+
+        // Add the weekday names
+
+        var weekday_names = 'MON TUE WED THU FRI SAT SUN'.split(' '),
+            weekday_holder = clock.find('.weekdays');
+
+        $.each(weekday_names, function () {
+            weekday_holder.append('<span>' + this + '</span>');
+        });
+
+        var weekdays = clock.find('.weekdays span');
+
+        // Run a timer every second and update the clock
+
+        (function update_time() {
+
+            // Use moment.js to output the current time as a string
+            // hh is for the hours in 12-hour format,
+            // mm - minutes, ss-seconds (all with leading zeroes),
+            // d is for day of week and A is for AM/PM
+
+            var now = moment().format("hhmmssdA");
+
+            digits.h1.attr('class', digit_to_name[now[0]]);
+            digits.h2.attr('class', digit_to_name[now[1]]);
+            digits.m1.attr('class', digit_to_name[now[2]]);
+            digits.m2.attr('class', digit_to_name[now[3]]);
+            // digits.s1.attr('class', digit_to_name[now[4]]);
+            // digits.s2.attr('class', digit_to_name[now[5]]);
+
+            // The library returns Sunday as the first day of the week.
+            // Stupid, I know. Lets shift all the days one position down, 
+            // and make Sunday last
+
+            var dow = now[6];
+            dow--;
+
+            // Sunday!
+            if (dow < 0) {
+                // Make it last
+                dow = 6;
+            }
+
+            // Mark the active day of the week
+            weekdays.removeClass('active').eq(dow).addClass('active');
+
+            // Set the am/pm text:
+            ampm.text(now[7] + now[8]);
+
+            // Schedule this function to be run again in 1 sec
+            setTimeout(update_time, 1000);
+
+        })();
+
+        // Switch the theme
+
+        $('a.button').click(function () {
+            clock.toggleClass('light dark');
+        });
+
+    });
+
+
+    // window.onload = function () {
+    //     clock();
+
+    //     function clock() {
+    //         var now = new Date();
+    //         var month = new Array();
+    //         month[0] = "January";
+    //         month[1] = "February";
+    //         month[2] = "March";
+    //         month[3] = "April";
+    //         month[4] = "May";
+    //         month[5] = "June";
+    //         month[6] = "July";
+    //         month[7] = "August";
+    //         month[8] = "September";
+    //         month[9] = "October";
+    //         month[10] = "November";
+    //         month[11] = "December";
+    //         var n = month[now.getMonth() + 1];
+    //         var TwentyFourHour = now.getHours();
+    //         var hour = now.getHours();
+    //         var min = now.getMinutes();
+    //         var sec = now.getSeconds();
+    //         var current_date = now.getDate();
+    //         var mid = 'PM';
+    //         if (min < 10) {
+    //             min = "0" + min;
+    //         }
+    //         if (hour > 12) {
+    //             hour = hour - 12;
+    //         }
+    //         if (hour == 0) {
+    //             hour = 12;
+    //         }
+    //         if (TwentyFourHour < 12) {
+    //             mid = 'AM';
+    //         }
+    //         document.getElementById('time').innerHTML = n + " " + current_date + ", " + hour + ':' + min + ' ' +
+    //         mid;
+    //         setTimeout(clock, 1000);
+    //     }
+    // }
     function formatDate(date)
     {
       var year = '',
@@ -633,7 +936,7 @@
     }
 
     setInterval(function(){
-      let l = "{{ $specialist->timezone }}";
+      let l = "{{ $specialist->user->time_zone }}";
       let ampm = new Date().toLocaleTimeString('en-US', { timeZone: l }).split(' ');
       let tm = new Date().toLocaleTimeString('en-US', { timeZone: l }).split(":");
       let dt = new Date().toLocaleDateString('en-US', { timeZone: l}).split('/');

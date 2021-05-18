@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Specialist;
 use App\Category;
 use App\Http\Controllers\Controller;
 use App\Models\Specialists\Service;
-use App\User;
-use App\ServiceCategory;
+use App\Specialist;
+use App\SubCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -20,10 +20,9 @@ class ServiceController extends Controller
     public function index()
     {
         
-        $services = ServiceCategory::where('user_id', Auth::user()->id)->get();
-        $category = Category::where('title',Auth::user()->serviceCategory->name)->first();
+        $services = Service::where('specialist_id', Auth::user()->specialist->id)->get();
         $categories = Category::all();
-        return view('frontend.settings.services',compact('services', 'category','categories'));
+        return view('frontend.settings.services',compact('services', 'categories'));
     }
 
     /**
@@ -44,15 +43,20 @@ class ServiceController extends Controller
      */
     public function store(Request $request)
     {
-        $serviceCategory = new ServiceCategory();
-        $serviceCategory->user_id = Auth::user()->id;
-        $serviceCategory->name = $request->name;
-        $serviceCategory->t_15 = $request->t_15;
-        $serviceCategory->t_30 = $request->t_30;
-        $serviceCategory->t_45 = $request->t_45;
-        $serviceCategory->t_60 = $request->t_60;
-        $serviceCategory->save();
-        return redirect()->route('services.index')->with('success','Service added Successfuly!');
+        $service = new Service();
+        $specialist = Specialist::where('user_id',Auth::user()->id)->first();
+        $service->specialist_id = $specialist->id;
+        $service->category_id = $request->category;
+        $service->sub_categories = json_encode($request->sub_categories);
+        $service->title =  $request->title;
+        $service->timing =  $request->timing;
+        $service->rate =  $request->rate;
+        // $tags = explode(',',$request->tags);
+        // $service->tags = json_encode($tags);
+        $service->description = $request->description;
+        $service->status =  isset($request->status) ? '1' : '0';
+        $service->save();
+        return back()->with('success','Service added Successfuly!');
     }
 
     /**
@@ -74,10 +78,14 @@ class ServiceController extends Controller
      */
     public function edit($id)
     {
-        $service = ServiceCategory::findOrFail($id);
+        $service = Service::findOrFail($id);
         $categories = Category::all();
-        $category = Category::where('title',$service->name)->first();
-        return view('specialist/services/edit', compact('service', 'categories','category'));
+        $subcategories = SubCategory::all();
+        $service_subcategories = json_decode($service->sub_categories);
+        $tags = json_decode($service->tags);
+        
+
+        return view('specialist/services/edit', compact('service', 'categories', 'subcategories', 'service_subcategories','tags'));
     }
 
     /**
@@ -89,15 +97,20 @@ class ServiceController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $serviceCategory = ServiceCategory::findOrFail($id);
-        // dd($serviceCategory);
-        $serviceCategory->name = $request->name;
-        $serviceCategory->t_15 = $request->t_15;
-        $serviceCategory->t_30 = $request->t_30;
-        $serviceCategory->t_45 = $request->t_45;
-        $serviceCategory->t_60 = $request->t_60;
-        $serviceCategory->save();
-        return back()->with('success', 'Service Updated Successfuly!');
+        $service = Service::findOrFail($id);
+        $specialist = Specialist::where('user_id', Auth::user()->id)->first();
+        $service->specialist_id = $specialist->id;
+        $service->category_id = $request->category;
+        $service->sub_categories = json_encode($request->sub_categories);
+        $service->title =  $request->title;
+        $service->timing =  $request->timing;
+        $service->rate =  $request->rate;
+        // $tags = explode(',', $request->tags);
+        // $service->tags = json_encode($tags);
+        $service->description = $request->description;
+        $service->status =  isset($request->status)?'1':'0';
+        $service->save();
+        return back()->with('success', 'Service added Successfuly!');
     }
 
     /**

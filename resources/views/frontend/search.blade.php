@@ -127,7 +127,7 @@
     <p class="main_title RobotoMedium f-34 cl-000000 fw-600 m-0 ">OOps nothing found</p>
     <img src="{{ asset('assets/frontend/images/greencurve.png') }}" class="img-fluid pt-3" alt="">
 </section>
-    
+
 @endif
 @endsection 
 

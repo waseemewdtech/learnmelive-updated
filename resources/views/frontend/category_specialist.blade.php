@@ -29,18 +29,18 @@
     <section class=" main_padding pt-5">
         <div>
             <ul class="listStyle-none p-0  d-flex robotoRegular f-18 ul_main_tabs m-0 d-flex justify-content-around">
-                @foreach (categories()->take(6) as $category)
-                    <li class="pl-3"> <a href="{{ route('category_specialists',$category->id) }}" class="cl-3b3b3b3">{{ ucwords($category->title) }}</a></li>
+                @foreach (categories()->take(8) as $category)
+                    <li class="pl-3"> <a href="{{ route('category_specialists',$category->id) }}" class="cl-3b3b3b3">{{ ucwords($category->name) }}</a></li>
                 @endforeach
-                @if (count(categories()->skip(6)) > 0)
+                @if (count(categories()->skip(8)) > 0)
                     
                 <li>
                     <!-- Example split danger button -->
                 <div class="btn-group">
                 <a href="" class=" dropdown-toggle dropdown-toggle-split cl-3b3b3b3"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">More...</a>
-                <div class="dropdown-menu dropdown-menu-nav height-300 overflow-y">
+                <div class="dropdown-menu dropdown-menu-nav">
                     @foreach (categories()->skip(8) as $category)
-                    <a class="dropdown-item " href="{{ route('category_specialists',$category->id) }}">{{ ucwords($category->title) }}</a>
+                    <a class="dropdown-item " href="{{ route('category_specialists',$category->id) }}">{{ ucwords($category->name) }}</a>
                         
                     @endforeach
                     
@@ -68,15 +68,15 @@
 
         @foreach($specialists as $specialist)
             <div class="col-md-3 col-lg-3 col-sm-12 mb-3">
-                <a href="{{route('specialist_detail',encrypt($specialist->user->id))}}" >
+                <a href="{{route('specialist_detail',encrypt($specialist->id))}}" >
                     <div class="card border-0 box_shadow">
                         <img src="{{ asset('assets/frontend/images/86d75f5ebf6abc13a630dda33b292727.png') }}"
                             class="card-img-top" alt="...">
                         <div class="card-body p-0 m-0 bg-transparent circle card_circle ">
-                               <img src="{{ ($specialist->user->picture != null) ? asset($specialist->user->picture) : asset('uploads/user/default.jpg') }}"  class="img-fluid rounded-circle h-60 w-60 profile-shadow"  alt="profile"  >
+                               <img src="{{ ($specialist->user->avatar != null) ? asset($specialist->user->avatar) : asset('uploads/user/default.jpg') }}"  class="img-fluid rounded-circle h-60 w-60 profile-shadow"  alt="profile"  >
                         </div>
                         <div class="card-footer  bg-ffffff pt-4 pb-4">
-                            <h5 class="card-title m-0 RobotoMedium f-21 cl-000000">{{ ucwords($specialist->category->title) }}</h5>
+                            <h5 class="card-title m-0 RobotoMedium f-21 cl-000000">{{ ucwords($specialist->category->name) }}</h5>
                             <p class="card-text m-0 robotoRegular cl-6 cl-6b6b6b f-21 pt-1">{{ $specialist->user->username }}
                             </p>
                         </div>
@@ -88,6 +88,5 @@
     </div>
     
 </section>
-
 @endsection 
 

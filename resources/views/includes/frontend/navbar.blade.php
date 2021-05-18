@@ -68,15 +68,15 @@
                 <div class="dropdown-menu p-0" aria-labelledby="navbarDropdown">
                     @foreach (appointmentCount()['appointments'] as $appointment)
                         
-                    {{-- <a class="dropdown-item d-flex row m-0 pt-2" href="{{ url('appointments') }}">
+                    <a class="dropdown-item d-flex row m-0 pt-2" href="{{ url('appointments') }}">
                         <div class="col-md-2 p-0">
-                            <img src="{{ asset(Auth::user()->type=='seller' ? $appointment->user->picture : $appointment->specialist->user->picture ) }}"
+                            <img src="{{ asset(Auth::user()->user_type=='specialist' ? $appointment->user->avatar : $appointment->specialist->user->avatar ) }}"
                                 alt="" class="img-fluid rounded-circle w-40 h-40" />
                                 <span class="green-dot ml--1 mt-1"></span>
                         </div>
                         <div class="col-md-6 pl-2 pt-1 p-0">
                             <div class="row m-0">
-                                <div class="dropdown-heading">{{Auth::user()->type=='seller' ? $appointment->user->username : $appointment->specialist->user->username }}</div>
+                                <div class="dropdown-heading">{{Auth::user()->user_type=='specialist' ? $appointment->user->username : $appointment->specialist->user->username }}</div>
                             </div>
                             <div class="row m-0">
                                 <div class="dropdown-contnt">
@@ -92,7 +92,7 @@
                                 <span class="dropdown-contnt">{{ $appointment->time }}</span>
                             </div>
                         </div>
-                    </a> --}}
+                    </a>
                     @endforeach
                         
                     
@@ -152,17 +152,18 @@
                 </div>
             </li>
             <li class="nav-item  robotoRegular pl-4 cl-ffffff">
-                @if (Auth::user()->type == 'seller')
+                @if (Auth::user()->user_type == 'specialist')
                     <a class="nav-link cl-ffffff" href="{{  url('services')}}?add_new">Add Service</a>
-                @elseif(Auth::user()->type == 'buyer')
+                @elseif(Auth::user()->user_type == 'client')
                     <a class="nav-link cl-ffffff" href="{{ route('client.index')}}#post_job">Post Request</a>
                 @endif
             </li>
             <li class="nav-item  pl-4">
                 <a class="nav-img" data-toggle="dropdown" href="#">
-                    @if (Auth::user()->picture != null)
-                    <img src="{{ asset(Auth::user()->picture) }}" class="img-fluid rounded-circle w-40 h-40"
+                    @if (Auth::user()->avatar != null)
+                    <img src="{{ asset(Auth::user()->avatar) }}" class="img-fluid rounded-circle w-40 h-40"
                         alt="profile" />
+
                     @else
 
                     <img src="{{ asset('uploads/user/default.jpg') }}"
@@ -170,19 +171,19 @@
                     @endif
                 </a>
                 <div class="dropdown-menu dropdown-menu-right">
-                    @if (Auth::user()->type == 'buyer')
+                    @if (Auth::user()->user_type == 'client')
                     <a href="{{ route('client.index') }}" class="dropdown-item">Dashboard</a>
 
                     @endif
-                    @if (Auth::user()->type == 'seller')
+                    @if (Auth::user()->user_type == 'specialist')
                     <a href="{{ route('specialist.index') }}" class="dropdown-item">Dashboard</a>
 
                     @endif
-                    @if (Auth::user()->type == 'admin')
+                    @if (Auth::user()->user_type == 'admin')
                     <a href="{{ url('/dashboard/profile') }}" class="dropdown-item">Setting</a>
 
                     @endif
-                    @if (Auth::user()->type != 'admin')
+                    @if (Auth::user()->user_type != 'admin')
                     <a href="{{ route('profile.index') }}" class="dropdown-item">Profile</a>
 
                     @endif
@@ -199,10 +200,38 @@
 
 
             </li>
+            <script src="{{ asset('assets/frontend/js/video-js/jquery.min.js') }}"></script>
+            <script>
+            $(document).ready(function(){
+                    setInterval(function(){ 
+                        var username = $('.video-chat').data('caller');
+                        $.ajax({
+                            type: 'get',
+                            url: '{{ url("call-checker") }}',
+                            data: { name: username },
+                            success: function(data) {
+                                if(data.status == 'success' && data.caller !='{{Auth::user()->username}}' && data.call_to == '{{Auth::user()->username}}'  ){
+                                    $('.calling-div').removeClass('d-none');
+                                    $('.incoming-call').html('Incoming call from '+data.caller[0].toUpperCase()+data.caller.slice(1));
+                                    $('.accpet_call').attr('data-caller',data.caller);
+                                    play();
+                                    if(data.check != 'true'){
+                                        endCall();
+                                    }
+                                   
+                                }
+                            }
+                        })
+                    }, 5000);
+                })
+            </script>
+           
             @endguest
         </ul>
     </div>
 </nav>
+
+
 <script>
     function search_function() {
         var input = document.getElementById('search').value;
@@ -220,3 +249,5 @@
     }
 
 </script>
+
+

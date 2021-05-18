@@ -7,7 +7,6 @@ use Validator;
 use Hash;
 use App\User;
 use App\Role;
-use App\Category;
 use Yajra\DataTables\DataTables;
 use Auth;
 
@@ -149,17 +148,5 @@ class UserController extends Controller
         {
             return response()->json(['status'=>true]);
         }
-    }
-
-    public function getSpecialistDetail($id){
-        $specialist = User::where('id',decrypt($id))->first();
-        $category = Category::where('title',$specialist->serviceCategory->name)->first();
-        return view('frontend.specialist_detail',compact('specialist','category'));
-    }
-
-    public function getPortfolio($id)
-    {
-        $portfolios = User::where('id', decrypt($id))->first()->portfolios;
-        return view('frontend.portfolio_display',compact('portfolios'));
     }
 }

@@ -19,15 +19,15 @@
         background-color: #3ac574 !important;
     }
 
-    
-  
+
+
 
     .px-50 {
         padding-left: 50px !important;
         padding-right: 50px !important;
     }
 
-    
+
 
 </style>
 @endsection {{-- head end --}} {{-- content section start --}}
@@ -91,6 +91,29 @@
                 </div>
             </div>
         </div>
+        <div class="row d-flex justify-content-between">
+                                        <div
+                                            class="input-group mb-3 border-input col-md-5 pt-3 d-flex flex-nowrap border border-top-0 border-left-0 border-right-0">
+                                            <div><em class="fa fa-key"></em></div>
+                                            <div class="w-100">
+                                                <input type="text" id="stripe_public_key" class="form-control border-0"
+                                                    placeholder="Stripe public key" aria-label=""
+                                                    aria-describedby="basic-addon1" name="stripe_public_key"
+                                                    value="{{Auth::user()->stripe_public_key}}" />
+                                            </div>
+                                        </div>
+                                        <div
+                                            class="input-group mb-3 border-input pt-3 col-md-5 d-flex flex-nowrap border border-top-0 border-left-0 border-right-0">
+                                            <div><em class="fa fa-key"></em></div>
+                                            <div class="w-100">
+                                                <input type="text" class="w-100 form-control border-0"
+                                                    placeholder="stripe secrete key" id="stirpe_secrete_key"
+                                                    aria-label="" aria-describedby="basic-addon1"
+                                                    name="stripe_secrete_key"
+                                                    value="{{Auth::user()->stripe_secret_key}}" />
+                                            </div>
+                                        </div>
+                                    </div>
 
         <div class="row justify-content-end">
             <button type="submit" class="btn btn-sm bg-3AC574 text-white">Save Changes</button>

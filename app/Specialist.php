@@ -18,7 +18,7 @@ class Specialist extends Model
     {
         return $this->belongsTo(User::class);
     }
-    
+
     public function category()
     {
     	return $this->belongsTo(Category::class);
@@ -43,6 +43,10 @@ class Specialist extends Model
     public function ratings()
     {
         return $this->hasMany(Rating::class);
+    }
+    public function payment()
+    {
+        return $this->hasOne(Payment::class);
     }
 
 }
