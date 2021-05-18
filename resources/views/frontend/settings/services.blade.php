@@ -56,21 +56,28 @@
             </tr>
         </thead>
         <tbody>
-            <tr >
-                <td>1</td>
-                <td>{{ Auth::user()->serviceCategory->name }}</td>
-                <td>{{ Auth::user()->serviceCategory->t_15 }}</td>
-                <td>{{ Auth::user()->serviceCategory->t_30 }}</td>
-                <td>{{ Auth::user()->serviceCategory->t_45 }}</td>
-                <td>{{ Auth::user()->serviceCategory->t_60 }}</td>
-                <td style="min-width: 135px !important;">
-                    <button title="Click to Update Service" class="btn btn-warning btn-sm editServiceBtn"
-                        id="editServiceBtn" data-toggle="modal" data-target="#editServiceModal"
-                        data-Serviceid="">
-                        <i class="fe fe-pencil"></i> Edit
-                    </button>
-                </td>
-            </tr>
+            @if($services->count()>0)
+                @foreach($services as $key=>$service)
+
+                    <tr >
+                        <td>{{ ++$key }}</td>
+                        <td>{{ $service->name }}</td>
+                        <td>{{ $service->t_15 }}</td>
+                        <td>{{ $service->t_30 }}</td>
+                        <td>{{ $service->t_45 }}</td>
+                        <td>{{ $service->t_60 }}</td>
+                        <td style="min-width: 135px !important;">
+                            <button title="Click to Update Service" class="btn btn-warning btn-sm editServiceBtn"
+                                id="editServiceBtn" data-toggle="modal" data-target="#editServiceModal"
+                                data-Serviceid="{{ $service->id }}">
+                                <i class="fe fe-pencil"></i> Edit
+                            </button>
+                        </td>
+                    </tr>
+
+                @endforeach
+            @endif
+           
         </tbody>
     </table>
 </div>
@@ -145,7 +152,7 @@
                         </div> --}}
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-md btn-danger" data-dismiss="modal"> Cancel</button>
+                        <button type="button" class="btn btn-md btn-danger" data-dismiss="modal">Cancel</button>
                         <button type="submit" class="btn btn-md bg-3AC574 text-white"> Add
                             Service</button>
                     </div>
@@ -166,70 +173,10 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form action="{{ route('services.update',Auth::user()->serviceCategory->id) }}" method="POST">
-                    @csrf
-                    @method('put');
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label>Category</label>
-                            <select class="form-control" name="category" id="select_update_service_category" 
-                                style="width: 100%;" onchange="getCategoryTitle('select_update_service_category','update-note')">
-                                <option selected="selected" disabled>Choose category</option>
-                                @foreach ($categories as $cat)
-                                    <option {{ ($category->id==$cat->id)? 'selected':'' }} value="{{ $cat->id }}">{{ $cat->title }}</option>
-                                @endforeach
-                            </select>
-                        </div>
 
-                        <div class="form-group">
-                            <label for="update-note">Notes*</label>
-                            <input id="update-note" type="text" class="form-control text-capitalize" name="name"
-                                value="{{ $category->title }}" placeholder="Enter Service Title" readonly="" />
-                        </div>
+                <div class="requestServiceData"></div>
 
-                        <div class="form-group">
-                            <label for="t_15">Time 15</label>
-                            <input id="t_15" type="number" class="form-control text-capitalize" name="t_15"
-                                value="{{ Auth::user()->serviceCategory->t_15 }}"/>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="t_30">Time 30</label>
-                            <input id="t_30" type="number" class="form-control text-capitalize" name="t_30"
-                                value="{{ Auth::user()->serviceCategory->t_30 }}"/>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="t_45">Time 45</label>
-                            <input id="t_45" type="number" class="form-control text-capitalize" name="t_45"
-                                value="{{ Auth::user()->serviceCategory->t_45 }}"/>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="t_60">Time 60</label>
-                            <input id="t_60" type="number" class="form-control text-capitalize" name="t_60"
-                                value="{{ Auth::user()->serviceCategory->t_60 }}"/>
-                        </div>
-
-                       {{--  <div class="form-group">
-                            <label for="description">Description*</label>
-                            <textarea id="description" class="form-control summernote" name="description"
-                                required> </textarea>
-                        </div> --}}
-
-                        {{-- <div class="form-group">
-                            <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                                <input type="checkbox" name="status" class="custom-control-input" checked
-                                    id="customSwitch3" />
-                                <label class="custom-control-label p-0" for="customSwitch3">Inactive/Active</label>
-                            </div>
-                        </div> --}}
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-md btn-danger" data-dismiss="modal"> Cancel</button>
-                        <button type="submit" class="btn btn-md bg-3AC574 text-white">Update Service</button>
-                    </div>
-                </form>
+                
             </div>
         </div>
     </div>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 06, 2021 at 01:50 PM
+-- Generation Time: May 18, 2021 at 12:26 PM
 -- Server version: 10.1.38-MariaDB
 -- PHP Version: 7.3.2
 
@@ -36,8 +36,9 @@ CREATE TABLE `appointments` (
   `date` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `time` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `rate` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `service_time` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `timestamp` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `status` enum('0','1','2','3') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0',
-  `notification_status` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0',
   `payment_status` enum('0','1','2') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0',
   `payment_amount` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
@@ -48,9 +49,12 @@ CREATE TABLE `appointments` (
 -- Dumping data for table `appointments`
 --
 
-INSERT INTO `appointments` (`id`, `specialist_id`, `user_id`, `service_id`, `date`, `time`, `rate`, `status`, `notification_status`, `payment_status`, `payment_amount`, `created_at`, `updated_at`) VALUES
-(4, 27, 25, 4, '10 March 2021', '9:40 AM', '8', '1', '1', '2', NULL, '2021-03-10 06:30:43', '2021-04-27 05:37:09'),
-(14, 27, 25, 5, '01 Mar 2021', '1:00 PM', '12', '1', '1', '2', NULL, '2021-03-31 23:40:41', '2021-05-02 20:07:47');
+INSERT INTO `appointments` (`id`, `specialist_id`, `user_id`, `service_id`, `date`, `time`, `rate`, `service_time`, `timestamp`, `status`, `payment_status`, `payment_amount`, `created_at`, `updated_at`) VALUES
+(1, 19, 1, 5, '18 May 2021', '12:03 PM', '25', '15', '1621270980000', '0', '0', NULL, '2021-05-16 23:48:37', '2021-05-16 23:48:37'),
+(2, 19, 1, 7, '17 May 2021', '12:03 PM', '54', '30', '1621270980000', '1', '0', NULL, '2021-05-17 00:45:24', '2021-05-17 00:46:02'),
+(3, 19, 1, 5, '17 May 2021', '12:03 PM', '25', '15', '1621270980000', '2', '0', NULL, '2021-05-16 23:48:37', '2021-05-16 23:48:37'),
+(4, 19, 1, 7, '17 May 2021', '12:03 PM', '54', '30', '1621270980000', '3', '0', NULL, '2021-05-17 00:45:24', '2021-05-17 00:46:02'),
+(5, 19, 1, 5, '15 May 2021', '12:03 PM', '35', '30', '1621270980000', '0', '0', NULL, '2021-05-16 23:48:37', '2021-05-16 23:48:37');
 
 -- --------------------------------------------------------
 
@@ -79,8 +83,7 @@ CREATE TABLE `bids` (
 --
 
 INSERT INTO `bids` (`id`, `service_request_id`, `specialist_id`, `budget`, `delivery`, `attachment`, `perposal`, `work_status`, `payment_status`, `payment_amount`, `created_at`, `updated_at`, `status`) VALUES
-(2, 1, 27, '30', '3 Days', 'uploads/files/1616670790_Report-22-3-21 (2).pdf', NULL, '0', '0', NULL, '2021-03-25 06:13:10', '2021-03-29 00:18:03', '0'),
-(3, 2, 27, '45', '4 Days', NULL, '4545', '0', '0', '0', '2021-04-05 03:00:59', '2021-04-05 03:00:59', '0');
+(1, 1, 19, '60', '5 Days', NULL, 'this is detail of proposal', '0', '0', '0', '2021-05-17 20:31:07', '2021-05-18 00:02:57', '1');
 
 -- --------------------------------------------------------
 
@@ -424,7 +427,16 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (75, '2021_05_05_003818_create_tb_categories', 2),
 (76, '2021_05_05_020222_create_tb_servicecategory', 3),
 (77, '2021_05_06_015850_create_tb_portfolio', 4),
-(78, '2021_05_06_015850_create_tb_portofolio', 5);
+(78, '2021_05_06_015850_create_tb_portofolio', 5),
+(79, '2021_03_04_051747_create_services_table', 6),
+(80, '2021_03_04_100158_create_appointments_table', 6),
+(81, '2021_03_12_072349_create_service_requests_table', 6),
+(82, '2021_03_15_103925_create_bids_table', 6),
+(83, '2021_03_26_054455_add_column_to_bids', 6),
+(84, '2021_03_30_055446_add_column_to_bid', 6),
+(85, '2021_05_11_031343_create_tb_booking', 6),
+(86, '2021_03_29_093001_add_payment_status_to_appointment', 7),
+(87, '2021_05_17_021729_add_columns_duratin_rate_servicecategory', 8);
 
 -- --------------------------------------------------------
 
@@ -506,27 +518,15 @@ CREATE TABLE `ratings` (
 
 CREATE TABLE `services` (
   `id` bigint(20) UNSIGNED NOT NULL,
-  `specialist_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
   `category_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `sub_categories` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `title` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `timing` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `rate` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `status` enum('1','0') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '1',
   `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `description` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
-  `tags` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL
+  `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `services`
---
-
-INSERT INTO `services` (`id`, `specialist_id`, `category_id`, `sub_categories`, `title`, `timing`, `rate`, `status`, `created_at`, `updated_at`, `description`, `tags`) VALUES
-(4, 27, 1, '[\"1\"]', 'any php work', '120', '8', '1', '2021-03-10 06:26:47', '2021-03-10 06:26:47', '', ''),
-(5, 27, 1, '[\"1\"]', 'any backend task', '30', '12', '1', '2021-03-10 06:27:16', '2021-04-01 02:36:54', 'test', ''),
-(7, 27, 2, '[\"6\"]', 'test', '12', '85', '1', '2021-04-01 02:35:00', '2021-04-01 02:35:00', 'detail', '');
 
 -- --------------------------------------------------------
 
@@ -538,12 +538,11 @@ CREATE TABLE `service_requests` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `user_id` bigint(20) UNSIGNED DEFAULT NULL,
   `category_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `subcategories` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `title` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
-  `tags` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `attachment` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `budget` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `status` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'inactive',
+  `description` longtext COLLATE utf8mb4_unicode_ci,
+  `status` enum('1','0') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -552,10 +551,8 @@ CREATE TABLE `service_requests` (
 -- Dumping data for table `service_requests`
 --
 
-INSERT INTO `service_requests` (`id`, `user_id`, `category_id`, `subcategories`, `title`, `description`, `tags`, `budget`, `status`, `created_at`, `updated_at`) VALUES
-(1, 25, 1, '[\"2\"]', 'any php work', 'this is description of the request', NULL, '25', 'active', '2021-03-25 04:11:54', '2021-04-23 06:26:26'),
-(2, 25, 1, '[\"2\"]', 'any php work', 'this is description of the request', NULL, '25', 'inactive', '2021-03-25 04:11:54', '2021-04-23 06:25:51'),
-(3, 25, 1, '[\"3\"]', 'all in one', 'this is in which all services are expected', NULL, '500', 'active', '2021-04-23 05:35:18', '2021-04-23 05:42:24');
+INSERT INTO `service_requests` (`id`, `user_id`, `category_id`, `title`, `attachment`, `budget`, `description`, `status`, `created_at`, `updated_at`) VALUES
+(1, 1, 63, 'IT & NETWORKING', NULL, '50', 'this is description of the post that has been posted by client', '1', '2021-05-16 20:25:06', '2021-05-16 20:25:06');
 
 -- --------------------------------------------------------
 
@@ -626,6 +623,45 @@ CREATE TABLE `tb_availabletime` (
 
 INSERT INTO `tb_availabletime` (`id`, `user_id`, `mon`, `tue`, `wed`, `thr`, `fri`, `sat`, `sun`, `created_at`, `updated_at`) VALUES
 (11, 19, '1620194400~1620246600', '1620208800~1620273600', 'Closed', 'Closed', 'Closed', '1620198000~1620266400', 'Closed', '2021-05-05 01:31:36', '2021-05-05 01:31:36');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tb_booking`
+--
+
+CREATE TABLE `tb_booking` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `buyer_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `seller_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `buyer_name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `seller_name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `buyer_picture` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `seller_picture` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `service_name` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `service_time` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `service_date` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `service_cost` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `description` longtext COLLATE utf8mb4_unicode_ci,
+  `state` varchar(5) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `reason` longtext COLLATE utf8mb4_unicode_ci,
+  `review` longtext COLLATE utf8mb4_unicode_ci,
+  `rating` varchar(5) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0',
+  `possible` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `paystate` varchar(5) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `project_type` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `project_id` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `tb_booking`
+--
+
+INSERT INTO `tb_booking` (`id`, `buyer_id`, `seller_id`, `buyer_name`, `seller_name`, `buyer_picture`, `seller_picture`, `service_name`, `service_time`, `service_date`, `service_cost`, `description`, `state`, `reason`, `review`, `rating`, `possible`, `paystate`, `project_type`, `project_id`, `created_at`, `updated_at`) VALUES
+(1, 1, 19, 'client', 'specialist', 'http://localhost/laravelprojects/learnmelive-updated/uploads/user/1621232368.png', 'http://localhost/laravelprojects/learnmelive-updated/uploads/user/1621232327.png', 'TRAVEL', '30', '1621270980000', '54', NULL, NULL, NULL, NULL, '0', '0', NULL, 'appointments', '2', '2021-05-17 00:46:02', '2021-05-17 00:46:02'),
+(4, 1, 19, 'client', 'specialist', 'http://localhost/laravelprojects/learnmelive-updated/uploads/user/1621232368.png', 'http://localhost/laravelprojects/learnmelive-updated/uploads/user/1621232327.png', 'IT & NETWORKING', '7200', NULL, '60', 'this is detail of proposal', NULL, NULL, NULL, '0', '0', NULL, 'bids', '1', '2021-05-18 00:02:57', '2021-05-18 00:02:57');
 
 -- --------------------------------------------------------
 
@@ -783,8 +819,10 @@ INSERT INTO `tb_portofolio` (`id`, `user_id`, `image`, `created_at`, `updated_at
 CREATE TABLE `tb_servicecategory` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `user_id` bigint(20) UNSIGNED NOT NULL,
-  `category_id` bigint(20) UNSIGNED NOT NULL,
+  `category_id` bigint(20) UNSIGNED DEFAULT NULL,
   `name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `duration` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `rate` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `t_15` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `t_30` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `t_45` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -797,8 +835,10 @@ CREATE TABLE `tb_servicecategory` (
 -- Dumping data for table `tb_servicecategory`
 --
 
-INSERT INTO `tb_servicecategory` (`id`, `user_id`, `category_id`, `name`, `t_15`, `t_30`, `t_45`, `t_60`, `created_at`, `updated_at`) VALUES
-(5, 19, 158, 'Instagram', NULL, NULL, NULL, NULL, '2021-05-05 01:31:36', '2021-05-05 01:31:36');
+INSERT INTO `tb_servicecategory` (`id`, `user_id`, `category_id`, `name`, `duration`, `rate`, `t_15`, `t_30`, `t_45`, `t_60`, `created_at`, `updated_at`) VALUES
+(5, 19, 158, 'Instagram', '40', '30', '25', '38', NULL, '65', '2021-05-05 01:31:36', '2021-05-17 20:19:35'),
+(7, 19, NULL, 'TRAVEL', '120', '245', '45', '54', NULL, NULL, '2021-05-16 21:23:25', '2021-05-16 21:23:25'),
+(8, 19, NULL, 'Relaxation', NULL, NULL, '25', NULL, NULL, '55', '2021-05-17 20:19:51', '2021-05-17 20:21:40');
 
 -- --------------------------------------------------------
 
@@ -847,8 +887,8 @@ CREATE TABLE `tb_user` (
 --
 
 INSERT INTO `tb_user` (`id`, `type`, `username`, `first_name`, `last_name`, `email`, `password`, `phone`, `picture`, `dob`, `gender`, `country`, `remember_token`, `profile_complete`, `address`, `description`, `languages`, `tools`, `approve`, `token`, `state`, `rating`, `count`, `notification`, `timezone`, `account_id`, `payment_type`, `ssn`, `google_id`, `fb_id`, `last_login`, `created_at`, `updated_at`) VALUES
-(1, 'buyer', 'client', 'first', 'last', 'client@gmail.com', '$2y$10$9o5tHiI/nuROeEV.gaRBPuh5nfZUAwVHzTuS9z151sdoZ/2ibEt/a', '+923017161638', '', NULL, 'male', 'Pakistan', NULL, '0', NULL, NULL, NULL, NULL, '0', NULL, 'offline', '0', 0, 'on', 'America/Chicago', NULL, NULL, NULL, NULL, NULL, '1620301868', '2021-05-04 01:41:32', '2021-05-06 01:50:48'),
-(19, 'seller', 'specialist', 'abudr1', 'rehman', 'superadmin22@gmail.com', '$2y$10$c0DV2pO6dOHh.STCqjV6uePmzQO8qPsu2Kpwal/de3MmVi5KQwxmm', '+923017161638', 'http://localhost/laravelprojects/learnmelive-updated/uploads/user/1620214295.png', NULL, 'male', 'Pakistan', NULL, '0', 'fsd pakistan', 'i have two years experince in php/laravel developer ', 'Armenian,English,Punjabi', NULL, '1', NULL, 'offline', '0', 0, 'on', 'America/Chicago', NULL, 'paypal', NULL, NULL, NULL, '0', '2021-05-05 01:31:36', '2021-05-05 01:31:36');
+(1, 'buyer', 'client', 'first', 'last', 'client@gmail.com', '$2y$10$9o5tHiI/nuROeEV.gaRBPuh5nfZUAwVHzTuS9z151sdoZ/2ibEt/a', '+923017161638', 'http://localhost/laravelprojects/learnmelive-updated/uploads/user/1621232368.png', NULL, 'male', 'Pakistan', NULL, '0', NULL, NULL, NULL, NULL, '1', NULL, 'offline', '0', 0, 'on', 'America/Chicago', NULL, NULL, NULL, NULL, NULL, '1621333470', '2021-05-04 01:41:32', '2021-05-18 00:24:10'),
+(19, 'seller', 'specialist', 'abudr1', 'rehman', 'specialist@gmail.com', '$2y$10$c0DV2pO6dOHh.STCqjV6uePmzQO8qPsu2Kpwal/de3MmVi5KQwxmm', '+923017161638', 'http://localhost/laravelprojects/learnmelive-updated/uploads/user/1621232327.png', NULL, 'male', 'Pakistan', NULL, '0', 'fsd pakistan', 'i have two years experince in php/laravel developer ', 'Armenian,English,Punjabi', NULL, '1', NULL, 'offline', '0', 0, 'on', 'America/Chicago', NULL, 'paypal', NULL, NULL, NULL, '1621333076', '2021-05-05 01:31:36', '2021-05-18 00:17:36');
 
 -- --------------------------------------------------------
 
@@ -1006,7 +1046,7 @@ ALTER TABLE `ratings`
 --
 ALTER TABLE `services`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `services_specialist_id_foreign` (`specialist_id`),
+  ADD KEY `services_user_id_foreign` (`user_id`),
   ADD KEY `services_category_id_foreign` (`category_id`);
 
 --
@@ -1031,6 +1071,14 @@ ALTER TABLE `specialists`
 ALTER TABLE `tb_availabletime`
   ADD PRIMARY KEY (`id`),
   ADD KEY `tb_availabletime_user_id_foreign` (`user_id`);
+
+--
+-- Indexes for table `tb_booking`
+--
+ALTER TABLE `tb_booking`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `tb_booking_buyer_id_foreign` (`buyer_id`),
+  ADD KEY `tb_booking_seller_id_foreign` (`seller_id`);
 
 --
 -- Indexes for table `tb_categories`
@@ -1081,13 +1129,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `appointments`
 --
 ALTER TABLE `appointments`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `bids`
 --
 ALTER TABLE `bids`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `categories`
@@ -1123,7 +1171,7 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=79;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=88;
 
 --
 -- AUTO_INCREMENT for table `payments`
@@ -1147,13 +1195,13 @@ ALTER TABLE `ratings`
 -- AUTO_INCREMENT for table `services`
 --
 ALTER TABLE `services`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `service_requests`
 --
 ALTER TABLE `service_requests`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `specialists`
@@ -1166,6 +1214,12 @@ ALTER TABLE `specialists`
 --
 ALTER TABLE `tb_availabletime`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
+-- AUTO_INCREMENT for table `tb_booking`
+--
+ALTER TABLE `tb_booking`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `tb_categories`
@@ -1189,7 +1243,7 @@ ALTER TABLE `tb_portofolio`
 -- AUTO_INCREMENT for table `tb_servicecategory`
 --
 ALTER TABLE `tb_servicecategory`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `tb_user`
@@ -1211,16 +1265,16 @@ ALTER TABLE `users`
 -- Constraints for table `appointments`
 --
 ALTER TABLE `appointments`
-  ADD CONSTRAINT `appointments_service_id_foreign` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `appointments_specialist_id_foreign` FOREIGN KEY (`specialist_id`) REFERENCES `specialists` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `appointments_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `appointments_service_id_foreign` FOREIGN KEY (`service_id`) REFERENCES `tb_servicecategory` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `appointments_specialist_id_foreign` FOREIGN KEY (`specialist_id`) REFERENCES `tb_user` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `appointments_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `tb_user` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `bids`
 --
 ALTER TABLE `bids`
   ADD CONSTRAINT `bids_service_request_id_foreign` FOREIGN KEY (`service_request_id`) REFERENCES `service_requests` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `bids_specialist_id_foreign` FOREIGN KEY (`specialist_id`) REFERENCES `specialists` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `bids_specialist_id_foreign` FOREIGN KEY (`specialist_id`) REFERENCES `tb_user` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `category_specialists`
@@ -1275,15 +1329,15 @@ ALTER TABLE `ratings`
 -- Constraints for table `services`
 --
 ALTER TABLE `services`
-  ADD CONSTRAINT `services_category_id_foreign` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `services_specialist_id_foreign` FOREIGN KEY (`specialist_id`) REFERENCES `specialists` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `services_category_id_foreign` FOREIGN KEY (`category_id`) REFERENCES `tb_categories` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `services_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `tb_user` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `service_requests`
 --
 ALTER TABLE `service_requests`
-  ADD CONSTRAINT `service_requests_category_id_foreign` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `service_requests_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `service_requests_category_id_foreign` FOREIGN KEY (`category_id`) REFERENCES `tb_categories` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `service_requests_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `tb_user` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `specialists`
@@ -1297,6 +1351,13 @@ ALTER TABLE `specialists`
 --
 ALTER TABLE `tb_availabletime`
   ADD CONSTRAINT `tb_availabletime_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `tb_user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `tb_booking`
+--
+ALTER TABLE `tb_booking`
+  ADD CONSTRAINT `tb_booking_buyer_id_foreign` FOREIGN KEY (`buyer_id`) REFERENCES `tb_user` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `tb_booking_seller_id_foreign` FOREIGN KEY (`seller_id`) REFERENCES `tb_user` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `tb_paymentinfo`
