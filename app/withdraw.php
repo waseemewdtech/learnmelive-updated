@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Booking extends Model
+class withdraw extends Model
 {
-    protected $table = 'tb_booking';
+    //
 }

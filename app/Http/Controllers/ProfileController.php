@@ -7,18 +7,14 @@ use App\Client;
 use App\Http\Controllers\Controller;
 use App\Models\Appointment;
 use App\Models\Bid;
-use App\Models\Specialists\Portfolio;
+use App\Portfolio;
 use App\Models\Specialists\Service;
 use App\Specialist;
 use App\User;
 use App\SubCategory;
-use App\PaymentInfo;
-use App\AvailableTime;
-use App\ServiceCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
 
 class ProfileController extends Controller
 {
@@ -42,23 +38,9 @@ class ProfileController extends Controller
         //     $appointments = Appointment::where('user_id', Auth::user()->id)->get();
         //     return view('profile', compact('profile', 'subcategories', 'categories','appointments', 'bids'));
         // }
-        $categories = Category::all();
+        $subcategories = SubCategory::all();
         $profile = Auth::user();
-        if($profile->type=='seller')
-        {
-            $category = Category::where('title',$profile->serviceCategory->name)->first();
-            if($category->category_id !=-1)
-            {
-                $parentCategory =  Category::where('id',$category->category_id)->first();
-                $subCategories =  Category::where('id',$parentCategory->id)->orWhere('category_id',$parentCategory->id)->get();
-            }else{
-                $subCategories = Category::where('title',Auth::user()->serviceCategory->name)->get();
-            }    
-        }else{
-            $subCategories = [];
-        }
-        
-        return view('frontend.settings.profile', compact('profile', 'subCategories'));
+        return view('frontend.settings.profile', compact('profile', 'subcategories'));
     }
 
     /**
@@ -70,7 +52,6 @@ class ProfileController extends Controller
     {
         $profile = User::find(Auth::id());
         $old_avatar = $profile->picture;
-
         $this->validate($request, [
             'avatar' => 'required|image|mimes:jpeg,jpg,png|max:2048',
         ]);
@@ -80,21 +61,18 @@ class ProfileController extends Controller
 
             $profileImage = $request->file('avatar');
             $profile_image_original_name = $profileImage->getClientOriginalName();
-            $image_changed_name = time() . '.'.$profileImage->extension();
+            $image_changed_name = time() . '_' . str_replace('', '-', '');
 
             $profileImage->move('public/uploads/user/', $image_changed_name);
-            $avatar_url = url('/uploads/user') .'/'. $image_changed_name;
+            $avatar_url = 'public/uploads/user/' . $image_changed_name;
         }
 
-        $profile->picture = $avatar_url;
+        $profile->avatar = $avatar_url;
         $profile->save();
 
-        if (!empty($old_avatar)){
-            if(file_exists($old_avatar)){
-                unlink($old_avatar);
-            }
+        if (!empty($old_avatar)) {
+            unlink($old_avatar);
         }
-
         return back()->with('success', 'Profile image updated successfully!');
     }
 
@@ -188,101 +166,74 @@ class ProfileController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request,$id)
+    public function update(Request $request)
     {
-        $profile = User::find($id);
-        $validations = Validator::make($request->all(), [
-            'first_name' => ['required', 'string', 'max:255'],
-            'last_name' => ['required', 'string', 'max:255'],
-            'phone' => ['required', 'string', 'max:255'],
-            'username' => ['required', 'string', 'max:255', 'unique:tb_user,username,' . $profile->id],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:tb_user,email,' . $profile->id],
+
+        $profile = User::find(Auth::id());
+        $this->validate($request, [
+            'name' => ['required', 'string', 'max:255'],
+            'username' => ['nullable', 'string', 'max:255', 'unique:users,username,' . $profile->id],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $profile->id],
         ]);
 
-        if($validations->fails())
-        {
-            return back()->withErrors($validations);
-        }
 
         $profile->username = $request->username;
-        $profile->first_name = $request->first_name;
-        $profile->last_name = $request->last_name;
+        $profile->name = $request->name;
         $profile->email = $request->email;
         $profile->country = $request->country;
-        $profile->phone = $request->phone;
-        $profile->timezone = $request->timezone;
+        $profile->time_zone = $request->timezone;
+        $profile->stripe_public_key = $request->stripe_public_key;
+        $profile->stripe_secret_key = $request->stripe_secrete_key;
+        $profile->status = 'active';
         $profile->save();
 
-        if(Auth::user()->type != 'admin'){
+        if(Auth::user()->user_type != 'admin'){
 
-            if ($profile->type == 'seller') {
-                if(count($request->days) >0)
-                {
-                    date_default_timezone_set(config('app.timezone'));
-                    foreach(['mon','tue','wed','thr','fri','sat','sun'] as  $key => $value){
-                        if(in_array($value,$request->days)){
-                            $f = $value.'_from';
-                            $t = $value.'_to';
-                            $hours_arr[$value] = (strtotime($request->$f)*1000).'~'.(intval(strtotime($request->$t)*1000));
-                        }else{
-                            $hours_arr[$value] = 'Closed';
-                        }
+            if ($profile->user_type == 'specialist') {
+                if (count($request->days) > 0) {
+                    foreach ($request->days as $key => $value) {
+                        $from = $value . '_from';
+                        $to = $value . '_to';
+                        $hours_arr[$value] = [$request->$from, $request->$to];
+                        // if($value =="saturday" || $value=='sunday')
+                        // {
+                        //     $hours_arr[$value] = ['closed'];
+                        // }
+                        // else
+                        // {
+                        //     $hours_arr[$value] = [$data[$value.'_from'],$data[$value.'_to']];
+                        // }
+
                     }
-                    $hours_arr['user_id'] = $profile->id;
-                    AvailableTime::where('user_id',$profile->id)->update($hours_arr);
                 }
-                $category = Category::find($request->sub_category_id);
-                $serviceCategoryFirst= ServiceCategory::where('user_id',$profile->id)->first();
-                $serviceCategory= ServiceCategory::find($serviceCategoryFirst->id);
-                $serviceCategory->user_id = $profile->id;
-                $serviceCategory->category_id = $category->id;
-                $serviceCategory->name = $category->title;
-                $serviceCategory->save();
 
-                // if (count($request->days) > 0) {
-                //     foreach ($request->days as $key => $value) {
-                //         $from = $value . '_from';
-                //         $to = $value . '_to';
-                //         $hours_arr[$value] = [$request->$from, $request->$to];
-                //         // if($value =="saturday" || $value=='sunday')
-                //         // {
-                //         //     $hours_arr[$value] = ['closed'];
-                //         // }
-                //         // else
-                //         // {
-                //         //     $hours_arr[$value] = [$data[$value.'_from'],$data[$value.'_to']];
-                //         // }
-            
-                //     }
-                // }
-            
-                // $specialist = Specialist::findOrFail(Auth::user()->specialist->id);
-                // $specialist->user_id = $profile->id;
-                // $specialist->category_id = $request->category_id;
-                // $specialist->sub_category_id = json_encode($request->sub_category_id);
-                // $specialist->business_phone = $request->business_phone;
-                // $specialist->public_profile = $request->public_profile;
-                // $specialist->payment_method = $request->payment_method;
-                // if ($request->payment_method == 'stripe' && $request->user_type != 'client') {
-                //     $specialist->payment_first_name = $request->payment_first_name;
-                //     $specialist->payment_last_name = $request->payment_last_name;
-                //     $specialist->payment_birth_date = $request->payment_birth_date;
-                //     $specialist->payment_ssn = $request->payment_ssn;
-                //     $specialist->account_number = $request->account_number;
-                //     $specialist->routing_number = $request->routing_number;
-                //     $specialist->stripe_public_key = $request->stripe_public_key;
-                //     $specialist->stripe_secrete_key = $request->stripe_secrete_key;
-                // } else if ($request->payment_method != 'stripe' && $request->user_type != 'client') {
-                //     $specialist->payment_email = $request->payment_email;
-                // }
-                // $specialist->opening_hours = json_encode($hours_arr);
-            
-                // $specialist->save();
+                $specialist = Specialist::findOrFail(Auth::user()->specialist->id);
+                $specialist->user_id = $profile->id;
+                $specialist->category_id = $request->category_id;
+                $specialist->sub_category_id = json_encode($request->sub_category_id);
+                $specialist->business_phone = $request->business_phone;
+                $specialist->public_profile = $request->public_profile;
+                $specialist->payment_method = $request->payment_method;
+                if ($request->payment_method == 'stripe' && $request->user_type != 'client') {
+                    $specialist->payment_first_name = $request->payment_first_name;
+                    $specialist->payment_last_name = $request->payment_last_name;
+                    $specialist->payment_birth_date = $request->payment_birth_date;
+                    $specialist->payment_ssn = $request->payment_ssn;
+                    $specialist->account_number = $request->account_number;
+                    $specialist->routing_number = $request->routing_number;
+                    $specialist->stripe_public_key = $request->stripe_public_key;
+                    $specialist->stripe_secrete_key = $request->stripe_secrete_key;
+                } else if ($request->payment_method != 'stripe' && $request->user_type != 'client') {
+                    $specialist->payment_email = $request->payment_email;
+                }
+                $specialist->opening_hours = json_encode($hours_arr);
+
+                $specialist->save();
             } else if ($profile->user_type == 'client') {
                 $client = Client::findOrFail(Auth::user()->client->id);
                 $client->user_id = $profile->id;
                 $client->business_phone = $request->business_phone;
-            
+
                 $client->save();
             }
         }
@@ -303,12 +254,13 @@ class ProfileController extends Controller
 
     public function portfolio()
     {
-        $portfolio_images = Portfolio::where('specialist_id',Auth::user()->specialist->id)->get();
+        $portfolio_images = Portfolio::where('user_id',Auth::user()->id)->get();
         return view('frontend.settings.portfolio',compact('portfolio_images'));
     }
+    
     public function portfolioImages(Request $request)
     {
-       
+
         foreach ($request->images as $key => $image) {
             $portfolio = new Portfolio();
             $profile_image_original_name = $image->getClientOriginalName();

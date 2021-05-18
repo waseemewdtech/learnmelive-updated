@@ -111,12 +111,12 @@
     }
 
     .lable {
-    
+
     border: 1px solid #ced4da;
     border-radius: 5px;
     }
     .snehainput {
-        
+
         width: 93%;
     padding: 6px 5px;
     outline: none;
@@ -129,7 +129,7 @@
         padding-left: 143px;
     padding-right: 143px;
     }
-   
+
 .bid_submit{
     background-color: #3AC574 !important;
     color: #ffffff !important;
@@ -138,7 +138,7 @@
 .bid_close{
     color: #3AC574 !important;
     background-color: #ffffff !important;
-    border: 1px solid #3AC574; 
+    border: 1px solid #3AC574;
 
 }
 a:focus{
@@ -167,10 +167,10 @@ a:focus{
                         </div>
                         <div class="col-md-10 p-0 cl-6A6A6A">
                             @foreach ($appointments->take(3) as $appointment)
-                                
+
                             <div class="mt-3 row align-items-center bg-F2F5FA box_shadow2">
                                 <div class="col-md-7">
-                                    <p>{{ $appointment->specialist->user->username }}</p>
+                                    <p>{{ $appointment->user->username }}</p>
                                     <h3 class="fs-1-3">{{ ucwords($appointment->service->title) }}</h3>
                                 </div>
                                 <div class="col-md-5 p-0">
@@ -181,10 +181,10 @@ a:focus{
                                     <span class="font-weight-bold ml-3">Rate</span>
                                     <span class="ml-2">${{ $appointment->rate }}</span>
                                 </div>
-                                <div class="col-md-7 text-right"><button class="btn btn-success mb-2 mt-2 btn-sm">Message</button></div>
+                                <div class="col-md-7 text-right"><button class="btn btn-success mb-2 mt-2 btn-sm">Message</button><img src="{{ asset('assets/frontend/images/video-call-icon.png') }}" onclick="makeCall(this)" class=" img-fluid h-40 video-chat" id="video-chat" data-toggle="modal" data-target="#video-call-modal" data-caller="{{$appointment->user->username}}"></div>
                             </div>
                             @endforeach
-                            
+
                         </div>
                     </div>
                 </div>
@@ -195,6 +195,13 @@ a:focus{
             </div>
         </div>
         <div class="col-md-5 py-5 borderRadius-10px p-0 box_shadow1 border-top-green-10">
+            @if (Auth::user()->total_balance !=null && Auth::user()->total_balance !=0 && Auth::user()->withdraw_status !='request_made')
+            <h5 class="text-right pr-3">
+                <button class="btn btn-sm btn-outline-successs withdraw_request">Withdrwal</button>
+            </h5>
+            @elseif(Auth::user()->total_balance !=null && Auth::user()->total_balance !=0 )
+            <p>Your Withdrwal request is waiting for admin approval!</p>
+            @endif
             <div class="row px-5 align-items-center">
                 <div class="col-md-8">
                     <p class="cl-3ac754 f-34 mb-0">Available Balance $</p>
@@ -216,10 +223,10 @@ a:focus{
                     <img src="{{ asset('assets/frontend/images/arrow-up.png') }}" alt="" />
                 </div>
                 <div class="col-md-4">
-                    <h3 class="mb-0 f-45">$0</h3>
+                    <h3 class="mb-0 f-45">${{Auth::user()->total_balance}}</h3>
                 </div>
                 <div class="col-md-12 text-right">
-                    <p class="cl-6A6A6A f-18 mb-0">Updated 2h ago</p>
+                    <p class="cl-6A6A6A f-18 mb-0">{{Auth::user()->updated_at->diffForHumans()}}</p>
                 </div>
             </div>
             <br />
@@ -233,15 +240,15 @@ a:focus{
                     <img src="{{ asset('assets/frontend/images/arrow-up.png') }}" alt="" />
                 </div>
                 <div class="col-md-4">
-                    <h3 class="mb-0 f-45">$0</h3>
+                    <h3 class="mb-0 f-45">${{Auth::user()->total_balance}}</h3>
                 </div>
                 <div class="col-md-12 text-right">
-                    <p class="cl-6A6A6A f-18 mb-0">This Month So Far</p>
+                    <p class="cl-6A6A6A f-18 mb-0">{{Auth::user()->updated_at->diffForHumans()}}</p>
                 </div>
             </div>
         </div>
     </div>
-    @if(Auth::user()->approve=='1')
+    @if(Auth::user()->status=='active')
         <div class="row mt-3 pl-5 ">
             <div class="col-md-12 p-0">
                 <div class="row">
@@ -278,7 +285,7 @@ a:focus{
 
         <div class="row px-3 ml-1 mt-2 mb-5">
             <div class="nav flex-row nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-            
+
                 <a class="nav-link active cl-000000" id="v-pills-portfolio-tab"
                     data-toggle="pill" href="#v-pills-new" role="tab" aria-controls="v-pills-portfolio"
                     aria-selected="false">New</a>
@@ -298,11 +305,10 @@ a:focus{
                     </div>
                     <div class="mt-3 border w-100"></div>
                     @foreach ($service_requests as $service)
-                        @php 
-                            $check_bid = App\Models\Bid::where('service_request_id',$service->id)->where('specialist_id',Auth::user()->id)->first();
-
+                        @php
+                            $check_bid = App\Models\Bid::where('service_request_id',$service->id)->where('specialist_id',Auth::user()->specialist->id)->first();
                         @endphp
-                    
+
                         @if ($check_bid ==null)
                             <a href="javascript:void(0);" class=" service_request" title="Click To bid this request" data-toggle="modal" data-target="#exampleModal" data-serviceRequestID="{{ $service->id }}"  tabindex="0" data-toggle="tooltip" title="Click To bid this request">
                                 <div class="d-flex mt-4 justify-content-between pr-5" >
@@ -329,7 +335,7 @@ a:focus{
                                         <div class="d-flex pt-2">
                                             <div>
                                                 <div class="d-flex">
-                                                    
+
                                                     <div>@if($service->tags !=null)<img src="{{ asset('assets/frontend/images/Subtraction 2.png') }}" alt="" />@endif</div>
                                                     <div class="pl-1 cl-6b6b6b f-14 robotoRegular d-flex align-items-center">
                                                         @php  if($service->tags !=null){
@@ -341,7 +347,7 @@ a:focus{
                                             </div>
                                             <div></div>
                                         </div>
-                                    
+
                                     </div>
                                     <div class="robotoMedium text-right col-md-2 pr-0">
                                         <div class="f-24 cl-000000 white-spaces robotoMedium">${{ number_format(intval($service->budget))}}</div>
@@ -355,12 +361,12 @@ a:focus{
                             </a>
                             <div class="mt-3 border w-100"></div>
                         @endif
-                            
-                        
+
+
                     @endforeach
-                    
+
                 </div>
-        
+
                 <div class="col-md-12 mt-3 borderRadius-10px box_shadow1 pb-5 tab-pane fade " id="v-pills-already-bid">
                     <div class="d-flex mt-3 justify-content-between px-5 pt-1">
                         <div class="cl-3ac754 robotoMedium f-24">Job Description</div>
@@ -368,12 +374,12 @@ a:focus{
                     </div>
                     <div class="mt-3 border w-100"></div>
                     @foreach ($service_requests as $service)
-                        @php 
-                            $check_bid = App\Models\Bid::where('service_request_id',$service->id)->where('specialist_id',Auth::user()->id)->first();
+                        @php
+                            $check_bid = App\Models\Bid::where('service_request_id',$service->id)->where('specialist_id',Auth::user()->specialist->id)->first();
                         @endphp
                         @if ($check_bid !=null)
                             <a href="javascript:void(0);" class=" " title="Click To bid this request"   tabindex="0" data-toggle="tooltip" title="Click To bid this request">
-                                
+
                                 <div class="d-flex mt-4 justify-content-between pr-5" >
                                     <div class="col-md-9 pl-5 pr-0">
                                         <div class="cl-000000 robotoMedium f-24">{{ ucwords($service->title) }}</div>
@@ -398,7 +404,7 @@ a:focus{
                                         <div class="d-flex pt-2">
                                             <div>
                                                 <div class="d-flex">
-                                                    
+
                                                     <div>@if($service->tags !=null)<img src="{{ asset('assets/frontend/images/Subtraction 2.png') }}" alt="" />@endif</div>
                                                     <div class="pl-1 cl-6b6b6b f-14 robotoRegular d-flex align-items-center">
                                                         @php  if($service->tags !=null){
@@ -410,7 +416,7 @@ a:focus{
                                             </div>
                                             <div></div>
                                         </div>
-                                    
+
                                     </div>
                                     <div class="robotoMedium text-right col-md-2 pr-0">
                                         <div class="f-24 cl-000000 white-spaces robotoMedium">${{ number_format(intval($service->budget))}}</div>
@@ -424,15 +430,15 @@ a:focus{
                             <div class="mt-3 border w-100"></div>
                         @endif
 
-                        
+
                     @endforeach
-                    
+
                 </div>
 
             </div>
 
-            
-            
+
+
         </div>
     @else
         <div class="alert alert-warning alert-dismissible fade show mt-4" role="alert">
@@ -441,7 +447,7 @@ a:focus{
             <span aria-hidden="true">&times;</span>
             </button>
         </div>
-        
+
     @endif
 </div>
 
@@ -463,7 +469,7 @@ a:focus{
       </div>
       <form action="{{ route('bids.store') }}" method="post" enctype="multipart/form-data">
         @csrf
-        <input type="hidden" name="specialist_id" value="{{ Auth::user()->id }}"> 
+        <input type="hidden" name="specialist_id" value="{{ Auth::user()->specialist->id }}">
       <div class="modal-body">
         <div class="row">
             <div class="col-md-6 service_request_detail d-flex"></div>
@@ -485,7 +491,7 @@ a:focus{
                                     <label class="form-check-label" for="inlineRadio3">Minutes</label>
                                 </div>
                             </label>
-                            
+
                             <input type="number" name="delivery" id="delivery" class="form-control d-none">
                             <label class="lbl_duration" style="display: none;"></label>
                         </div>
@@ -507,7 +513,7 @@ a:focus{
                             <label for="">Attachment (optional)</label>
                             <input type="file" name="attachment" id="atatchment" class="form-control">
                         </div>
-                    </div> 
+                    </div>
                 </div>
             </div>
       </div>
@@ -522,10 +528,27 @@ a:focus{
 
 <!-- T E N    S E C T I O N  E N D  -->
 @endsection {{-- content section end --}} {{-- footer section start --}}
- @section('extra-script') 
- 
+ @section('extra-script')
+
 <script>
-   
+$('.withdraw_request').on('click',function(){
+  $.ajax({
+            type: "post",
+            url: "{{ url('withdraw_request') }}",
+            data: {
+                _token: "{{ csrf_token() }}",
+
+            },
+            success: function (data) {
+                $('.withdraw_request').remove();
+                swal({
+                            icon: "success",
+                            text: data,
+                            icon: 'success'
+                        });
+            },
+        });
+});
    function minBudget(e){
        if(e.value <5){
            e.value =5;
@@ -552,7 +575,7 @@ a:focus{
 
             duration[0].placeholder = "20 Minutes";
         }
-    }   
+    }
     $('.service_request').on('click',function(){
         var Service_request_id = $(this).attr('data-serviceRequestID');
         $.ajax({
@@ -587,8 +610,11 @@ a:focus{
         }else{
             $(".lbl_budget").css("display", "none");
         }
-         
+
     })
-     
+
 </script>
+
+
+
  @endsection

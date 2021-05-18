@@ -219,24 +219,39 @@ class FirebaseController extends Controller
         elseif (Auth::user()->user_type == 'client')
         $channel = $request->name . "_" . Auth::user()->username;
 
-        if(Channel::where('channel',$channel)->exists()){
-            $channel = Channel::where('channel', $channel)->first();
+        if(Channel::where('caller', Auth::user()->username)->orWhere('call_to',Auth::user()->username)->exists()){
+            $channel = Channel::where('caller', Auth::user()->username)->orWhere('call_to',Auth::user()->username)->first();
             if($channel->status == 2){
-                return response()->json(['status'=>'success','caller'=>$channel->caller]);
+                $currentTime = Carbon::now();
+                $time = (strtotime($channel->created_at)+30 >=time())? 'true':'false';
+                
+                // $differ = time()-$time;
+                return response()->json(['status'=>'success','caller'=>$channel->caller,'call_to'=>$channel->call_to,'check'=>(strtotime($channel->created_at)+30 >=time())? 'true':'false']);
             }
         }
+        // if(Channel::where('channel',$channel)->exists()){
+        //     $channel = Channel::where('channel', $channel)->first();
+        //     if($channel->status == 2){
+        //         return response()->json(['status'=>'success','caller'=>$channel->caller,'call_to'=>$channel->call_to]);
+        //     }
+        // }
     }
     public function callEnd(Request $request)
     {
-        if (Auth::user()->user_type == 'specialist')
-        $channel = Auth::user()->username . "_" . $request->name;
-        elseif (Auth::user()->user_type == 'client')
-        $channel = $request->name . "_" . Auth::user()->username;
+        // if (Auth::user()->user_type == 'specialist')
+        // $channel = Auth::user()->username . "_" . $request->name;
+        // elseif (Auth::user()->user_type == 'client')
+        // $channel = $request->name . "_" . Auth::user()->username;
 
-        if (Channel::where('channel', $channel)->exists()) {
-            $channel = DB::table('channels')->where('channel', $channel)->update(['status'=>'0']);
+        if (Channel::where('caller', Auth::user()->username)->orWhere('call_to',Auth::user()->username)->exists()) {
+            $channel = DB::table('channels')->where('caller', Auth::user()->username)->orWhere('call_to',Auth::user()->username)->delete();
             
             return 'call ended';
         }
+        // if (Channel::where('channel', $channel)->exists()) {
+        //     $channel = DB::table('channels')->where('channel', $channel)->update(['status'=>'0']);
+            
+        //     return 'call ended';
+        // }
     }
 }

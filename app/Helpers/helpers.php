@@ -59,7 +59,7 @@
     {
         function categories()
         {
-            return Category::get();
+            return Category::where('status','active')->get();
         }
     }
     if(!function_exists('countries'))
@@ -724,12 +724,12 @@
         }
     }
 
-    if(!function_exists('apointments_function')){
+    if(!function_exists('appointmentCount')){
         function appointmentCount()
         {
         if(Auth::check()){
-            if (Auth::user()->user_type == 'specialist') {
-                $appointments = Appointment::where('specialist_id', Auth::user()->specialist->id)->where('status','0')->get();
+            if (Auth::user()->type == 'seller') {
+                $appointments = Appointment::where('specialist_id', Auth::user()->id)->where('status','0')->get();
             } else {
                 $appointments = Appointment::where('user_id', Auth::user()->id)->where('status', '0')->get();
             }

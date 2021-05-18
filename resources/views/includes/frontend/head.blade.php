@@ -13,31 +13,9 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/vendor/sweetalert/sweetalert.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/admin/plugins/select2/css/select2.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/admin/plugins/datatables-buttons/css/buttons.bootstrap4.min.css')}}" />
-    <link rel="stylesheet" href="{{ asset('assets/admin/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/admin/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}" />
-    <style>
-        .overflow-y{overflow-y: scroll;}
-        .height-300{height:300px;}
-
-        ::-webkit-scrollbar-track {
-            background:#D5D5D5;
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar {
-            width: 6px;
-            border-radius: 10px;
-        }
-            
-        ::-webkit-scrollbar-thumb {
-            border-radius: 10px;
-            /*-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); */
-            background:#3AC574 !important;
-            height:100px;
-        }
-        
-    </style>
-    <script>
-        var url = "{{ url('/') }}";
-        var token = "{{ csrf_token() }}";
-    </script>
+        <link rel="stylesheet" href="{{ asset('assets/admin/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}" />
+        <link rel="stylesheet" href="{{ asset('assets/admin/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}" />
+        <script>
+            var url = "{{ url('/') }}";
+            var token = "{{ csrf_token() }}";
+        </script>

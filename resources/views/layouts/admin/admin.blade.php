@@ -39,28 +39,29 @@
             </div>
 
             <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                <a class="nav-link {{ Request::is('dashboard/profile') ? 'active' : ''  }} cl-000000"  href="{{ url('/dashboard') }}" >Profile</a>
+                <a class="nav-link {{ Request::is('dashboard/profile') ? 'active' : ''  }} cl-000000"  href="{{ url('/dashboard/profile') }}" >Profile</a>
                 <a class="nav-link {{ Request::is('dashboard/disputes') ? 'active' : ''  }} cl-000000"  href="{{ url('/dashboard/disputes') }}" >Disputes</a>
                 <a class="nav-link {{ Request::is('dashboard/categories') ? 'active' : ''  }} cl-000000"  href="{{ url('/dashboard/categories') }}" >Categories</a>
                 <a class="nav-link {{ Request::is('dashboard/subcategories') || Request::is('dashboard/subcategories/create') ? 'active' : ''  }} cl-000000"  href="{{ url('/dashboard/subcategories') }}" >Sub Categories</a>
                 <a class="nav-link {{ Request::is('dashboard/users') ? 'active' : ''  }} cl-000000"  href="{{ url('/dashboard/users') }}" >Users</a>
                 <a class="nav-link {{ Request::is('dashboard/client/postings') ? 'active' : ''  }} cl-000000"  href="{{ url('/dashboard/client/postings') }}" >Service Requests</a>
+                <a class="nav-link cl-000000 {{ Request::is('dashboard/admin/payments') ? 'active' : ''  }}" href="{{ url('/dashboard/admin/payments') }}">Payment Requests</a>
                 <a class="nav-link cl-000000 {{ Request::is('dashboard/password') ? 'active' : ''  }}" href="{{ url('/dashboard/password') }}">Password</a>
             </div>
         </div>
 
         <div class="col-md-8 col-lg-8 col-sm-12 pt-4 p-0 ml-4 box_shadow1 borderRadius-12px">
-            @yield('content') 
+            @yield('content')
         </div>
     </div>
 
-   
+
 
 
 </section>
-    
+
     @yield('footer')
-    
+
 <!-- E I G H T    S E C T I O N  S T A R T -->
 <section class="main_padding pt-70  w-100">
     <div class="w-100 border-bcbcbc"></div>
@@ -109,7 +110,7 @@
             $("#avatar_form").submit();
         }
     }
-    
+
     @if(Auth::check())
         setInterval(function(){
             $.ajax({
@@ -130,9 +131,9 @@
                                     html+='<div class="row m-0"><div class="dropdown-contnt">'+v.subject+'</div></div>';
                                 html+='</div>';
                             html+="</a>";
-                        } 
+                        }
                     });
-                    
+
                     let oldHtml = $('#nav-profile').html();
                     oldHtml+=html;
                     $('#nav-profile').html(oldHtml);
@@ -206,7 +207,7 @@
                     .buttons()
                     .container()
                     .appendTo(".dataTables_wrapper .col-md-6:eq(0)");
-                
+
             });
         </script>
     @yield('extra-script')

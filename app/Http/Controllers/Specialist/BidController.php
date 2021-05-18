@@ -4,8 +4,12 @@ namespace App\Http\Controllers\Specialist;
 
 use App\Http\Controllers\Controller;
 use App\Models\Bid;
+use App\Payment;
+use App\User;
 use Illuminate\Http\Request;
-
+use App\ServiceRequest;
+use App\Booking;
+use Auth;
 class BidController extends Controller
 {
     /**
@@ -15,7 +19,11 @@ class BidController extends Controller
      */
     public function index()
     {
-        $bids = Bid::all()->groupBy('service_request_id');
+        if(Auth::user()->type=='seller'){
+            $bids = Bid::where('specialist_id',Auth::user()->id)->get();
+        }elseif(Auth::user()->type=='buyer'){
+            $bids = Auth::user()->ServiceRequest;
+        }
         return view('frontend.settings.bid', compact('bids'));
     }
 
@@ -50,8 +58,6 @@ class BidController extends Controller
             $bid_request->delivery = $request->delivery . " " . $request->time;
         }
         if ($request->time == 'Minutes') {
-
-
             $bid_request->delivery = $request->delivery . " " . $request->time;
         }
         $bid_request->perposal = $request->perposal;
@@ -59,7 +65,8 @@ class BidController extends Controller
             $file_original_name = $file->getClientOriginalName();
             $image_changed_name = time() . '_' . str_replace('', '-', $file_original_name);
             $file->move('public/uploads/files/', $image_changed_name);
-            $bid_request->attachment = 'uploads/files/' . $image_changed_name;
+            $bid_request->attachment = url('/uploads/files')."/".$image_changed_name;
+            // $bid_request->attachment = 'uploads/files/' . $image_changed_name;
         }
         $bid_request->save();
         return back()->with('success', 'Bid Created Successfuly!');
@@ -100,8 +107,38 @@ class BidController extends Controller
         $bid->status = $request->status;
         $bid->save();
         $approval = Bid::where('service_request_id',$bid->service_request_id)->where('status','1')->exists();
-        
-    
+        if($approval){
+            if(Booking::where('project_id',$id)->where('project_type','bids')->first() ==null){
+                $booking = new Booking();
+                $booking->buyer_id =$bid->serviceRequest->user->id; 
+                $booking->seller_id =$bid->specialist->id;
+                $booking->buyer_name =$bid->serviceRequest->user->username; 
+                $booking->seller_name =$bid->specialist->username;
+                $booking->buyer_picture =$bid->serviceRequest->user->picture!=''?$bid->serviceRequest->user->picture:url('uploads/user/default.jpg'); 
+                $booking->seller_picture =$bid->specialist->picture!=''?$bid->specialist->picture:url('uploads/user/default.jpg'); 
+                $booking->service_name = $bid->serviceRequest->title;
+                $delivery = explode(' ',$bid->delivery);
+                if($delivery[1]=='Days')
+                {
+                    $booking->service_time = $delivery[0]*24*60;
+                }elseif($delivery[1]=='Hours')
+                {
+                    $booking->service_time = $delivery[0]*60;
+                }else
+                {
+                    $booking->service_time = $delivery[0];
+                }
+                $booking->service_cost = $bid->budget;
+                $booking->description = $bid->perposal;
+                $booking->project_type = 'bids';
+                $booking->project_id = $id;
+                $booking->possible = 0;
+                $booking->save();
+            }
+            
+        }else{
+            Booking::where('project_id',$id)->where('project_type','bids')->delete();
+        }
         return response()->json(['id' => $id, 'status' => $bid->status,'approval'=>$approval]);
     }
 
@@ -121,6 +158,17 @@ class BidController extends Controller
         $bid = Bid::findOrFail($request->bid_id);
         $bid->work_status = $request->work_status;
         $bid->save();
+        $payment = Payment::where('bid_id',$request->bid_id)->first();
+        $payment->release_status = 'released';
+        $payment->p_status = 'released';
+        $payment->save();
+        $user = User::where('id',$bid->specialist->user->id)->first();
+        $payment = Payment::where('release_status','released')->where('specialist_id',$bid->specialist_id)->sum('received_amount');
+        $deduction = ($payment/100)*20;
+        $user->total_balance =  $payment-$deduction;
+        $user->deduction = '20';
+        $user->save();
+
         return $bid->work_status;
     }
 }

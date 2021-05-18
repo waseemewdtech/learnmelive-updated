@@ -9,18 +9,21 @@ use Illuminate\Database\Eloquent\Model;
 
 class Bid extends Model
 {
-    public function service_request()
+    public function serviceRequest()
     {
         return $this->belongsTo(ServiceRequest::class);
     }
+
     public function specialist()
     {
-        return $this->belongsTo(User::class,'specialist_id','id');
+        return $this->belongsTo(Specialist::class);
     }
+
     public function user()
     {
         return $this->belongsTo(User::class);
     }
+
     public function getStatusAttribute($attribute)
     {
         return [
